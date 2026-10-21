@@ -1,0 +1,22 @@
+# Backend
+Backend/venv/
+Backend/.env
+Backend/uploads/*
+!Backend/uploads/.gitkeep
+**/__pycache__/
+
+# Frontend
+Frontend/node_modules/
+Frontend/dist/
+Frontend/.env
+
+# Machine Learning
+ML/datasets/*
+!ML/datasets/.gitkeep
+*.keras
+*.h5
+*.tflite
+.ipynb_checkpoints/
+
+# OS
+.DS_Store
