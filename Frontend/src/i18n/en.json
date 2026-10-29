@@ -1,0 +1,989 @@
+{
+  "nav": {
+    "features": "Features",
+    "howItWorks": "How it works",
+    "about": "About",
+    "login": "Login",
+    "getStarted": "Get Started",
+    "dashboard": "Dashboard",
+    "logout": "Logout"
+  },
+  "sidebar": {
+    "dashboard": "Dashboard",
+    "overview": "Overview",
+    "newScan": "New Scan",
+    "history": "Scan History",
+    "aiAssistant": "AI Assistant",
+    "reviewQueue": "Review Queue",
+    "reviewed": "Reviewed",
+    "outbreakMap": "Outbreak Map",
+    "users": "Users",
+    "officerApprovals": "Officer Approvals",
+    "treatments": "Treatments",
+    "diagnoses": "Diagnoses",
+    "modelPerformance": "Model Performance",
+    "auditLog": "Audit Log",
+    "profile": "Profile",
+    "comingSoon": "Coming soon",
+    "farmerPortal": "Farmer Portal",
+    "officerPortal": "Officer Portal",
+    "adminPortal": "Admin Portal",
+    "security": "Security"
+  },
+  "status": {
+    "auto": "Auto-Verified",
+    "pending_review": "Pending review",
+    "confirmed": "Confirmed by officer",
+    "corrected": "Corrected by officer",
+    "healthy": "Healthy Leaf",
+    "diseased": "Disease Detected"
+  },
+  "hero": {
+    "badge": "AI-Powered Crop Protection for Sri Lanka",
+    "title": "Detect Crop Leaf Diseases in Seconds with Explainable AI",
+    "subtitle": "Upload a photo of your Tomato, Potato, or Bell Pepper leaf to receive an instant MobileNetV2 diagnosis, Grad-CAM visual heatmap, and localized treatment guidance in Sinhala & English.",
+    "ctaPrimary": "Start Free Leaf Scan",
+    "ctaSecondary": "See How It Works",
+    "trustNote": "Trusted workflow with Agricultural Officer verification across all 25 Sri Lankan districts",
+    "mockup": {
+      "header": "Live AI Diagnostic Preview",
+      "verifiedBadge": "Grad-CAM Explainable AI",
+      "cropLabel": "Crop Specimen",
+      "cropValue": "Tomato (Solanum lycopersicum)",
+      "detectedLabel": "Detected Condition",
+      "detectedDisease": "Tomato Early Blight",
+      "detectedDiseaseSi": "තක්කාලි මුල් අංගමාරය",
+      "confidenceLabel": "AI Confidence Score",
+      "heatmapTitle": "Grad-CAM Activation Heatmap",
+      "heatmapCaption": "Highlighted red-amber zones show exact fungal lesion patterns used by MobileNetV2",
+      "statusLabel": "Verification Status",
+      "statusValue": "Auto-Verified (94.2% > 70% threshold)",
+      "adviceTitle": "Recommended Action",
+      "adviceText": "Remove infected lower leaves immediately and apply copper-based fungicide according to DOA guidelines."
+    }
+  },
+  "stats": {
+    "cropsLabel": "Supported Crops",
+    "cropsValue": "Tomato, Potato & Pepper",
+    "classesLabel": "Disease Classes",
+    "classesValue": "15 Trained Classes",
+    "languagesLabel": "Bilingual Advisory",
+    "languagesValue": "Sinhala & English",
+    "verificationLabel": "Expert Loop",
+    "verificationValue": "Officer Verified"
+  },
+  "features": {
+    "sectionBadge": "Platform Capabilities",
+    "title": "Built for Field Accuracy & Agronomic Trust",
+    "subtitle": "Combining deep learning computer vision with expert human-in-the-loop verification for Sri Lankan agriculture.",
+    "comingSoon": "Coming soon",
+    "liveBadge": "Available now",
+    "items": {
+      "detection": {
+        "title": "AI Leaf Disease Detection",
+        "desc": "Fine-tuned MobileNetV2 classifier trained on 15 classes of Tomato, Potato, and Bell Pepper leaves with 94% test accuracy."
+      },
+      "gradcam": {
+        "title": "Explainable AI Heatmaps",
+        "desc": "Grad-CAM visual overlays highlight the exact infected regions on the leaf so farmers and officers can trust every prediction."
+      },
+      "chatbot": {
+        "title": "Gemini AI Advisory Chatbot",
+        "desc": "Interactive bilingual farming assistant providing contextual treatment, dosage safety, and preventive agronomic advice."
+      },
+      "officer": {
+        "title": "Agricultural Officer Review",
+        "desc": "Low-confidence scans (<70%) are automatically queued for district Agricultural Officers to verify and relabel for model retraining."
+      },
+      "outbreakMap": {
+        "title": "District Outbreak Map",
+        "desc": "Interactive geospatial tracking across all 25 Sri Lankan districts to spot regional crop disease outbreaks early."
+      },
+      "iot": {
+        "title": "ESP32 IoT Field Sensors",
+        "desc": "Optional real-time environmental telemetry monitoring soil moisture, ambient temperature, and leaf humidity."
+      }
+    }
+  },
+  "howItWorks": {
+    "sectionBadge": "Simple 3-Step Workflow",
+    "title": "From Field Leaf Photo to Actionable Treatment",
+    "subtitle": "Designed for mobile phones in the field—no technical expertise required.",
+    "step1Title": "1. Upload Leaf Photo",
+    "step1Desc": "Snap a clear photo of an affected Tomato, Potato, or Bell Pepper leaf using your phone camera or upload from your gallery.",
+    "step2Title": "2. Instant AI & Grad-CAM Analysis",
+    "step2Desc": "Our MobileNetV2 model identifies the disease in seconds and generates a Grad-CAM heatmap pinpointing the lesion areas.",
+    "step3Title": "3. Get Bilingual Treatment Advice",
+    "step3Desc": "Receive symptoms, treatment steps, and prevention tips in Sinhala or English—backed by Agricultural Officer verification."
+  },
+  "techStack": {
+    "sectionBadge": "Architecture & Stack",
+    "titlePrefix": "How AgroLens AI",
+    "titleAccent": "is built",
+    "subtitle": "From a farmer's leaf photo to an officer-verified diagnosis — every layer has one clear job.",
+    "fact1": "MobileNetV2 transfer learning on the PlantVillage dataset",
+    "fact2": "Grad-CAM heatmaps show where the model looked",
+    "fact3": "Results under 70% confidence go to an Agricultural Officer",
+    "fact4": "Sinhala & English, built mobile-first for farmers",
+    "statAccuracyLabel": "Test accuracy",
+    "statClassesLabel": "Disease classes",
+    "statCropsValue": "3 crops",
+    "statCropsSub": "Tomato, Potato, Pepper",
+    "platformLabel": "Full-stack AI platform",
+    "comingSoon": "Coming soon",
+    "categories": {
+      "data": "Data",
+      "api": "API",
+      "model": "AI Model",
+      "explainability": "Explainability",
+      "advisory": "Advisory",
+      "interface": "Interface"
+    },
+    "layers": {
+      "mongodb": "Stores users, scans, reviews and treatments",
+      "fastapi": "Secure REST API with role-based access",
+      "tensorflow": "Classifies leaf diseases with a confidence score",
+      "gradcam": "Highlights the infected areas of the leaf",
+      "gemini": "Sinhala / English farming assistant",
+      "frontend": "Farmer, Officer & Admin dashboards"
+    }
+  },
+  "roles": {
+    "sectionBadge": "Unified Ecosystem",
+    "title": "Tailored Workspaces for Every Stakeholder",
+    "subtitle": "Three dedicated portals connecting field farmers, government agricultural officers, and platform administrators.",
+    "farmer": {
+      "badge": "Field Portal",
+      "title": "Farmer",
+      "desc": "Upload crop leaf photos on mobile, view Grad-CAM heatmaps, read Sinhala/English treatment guides, and track field scan history.",
+      "point1": "Instant leaf disease diagnosis & confidence score",
+      "point2": "Bilingual treatment & prevention guidance",
+      "point3": "Complete historical log of farm diagnoses"
+    },
+    "officer": {
+      "badge": "Expert Verification",
+      "title": "Agricultural Officer",
+      "desc": "Review uncertain AI diagnoses in your assigned district, provide expert corrections, and monitor local disease trends.",
+      "point1": "Review queue for scans with <70% confidence",
+      "point2": "Approve or correct labels with agronomy notes",
+      "point3": "Feed verified samples into the retraining pipeline"
+    },
+    "admin": {
+      "badge": "System Governance",
+      "title": "Platform Admin",
+      "desc": "Manage user accounts, update verified Department of Agriculture treatment protocols, and monitor ML model performance.",
+      "point1": "Manage farmers and district officers",
+      "point2": "Curate bilingual disease treatment database",
+      "point3": "Track model metrics and dataset retraining"
+    }
+  },
+  "cta": {
+    "title": "Ready to Protect Your Harvest with AI?",
+    "subtitle": "Join Sri Lankan farmers and agricultural officers using AgroLens AI to detect crop diseases early and reduce yield loss.",
+    "primaryBtn": "Create Free Account",
+    "secondaryBtn": "Sign In to Portal"
+  },
+  "footer": {
+    "tagline": "AI-powered crop leaf disease detection, Grad-CAM explainability, and bilingual farmer advisory platform built for Sri Lankan agriculture.",
+    "platformTitle": "Platform",
+    "cropsTitle": "Supported Crops",
+    "cropTomato": "Tomato (10 classes)",
+    "cropPotato": "Potato (3 classes)",
+    "cropPepper": "Pepper Bell (2 classes)",
+    "copyright": "© 2026 AgroLens AI, built by Damsarini Nawela",
+    "githubLabel": "GitHub Repository"
+  },
+  "auth": {
+    "panelTagline": "Empowering Sri Lankan agriculture with explainable computer vision and bilingual agronomic intelligence.",
+    "benefit1Title": "94% Test Accuracy on Field Crops",
+    "benefit1Desc": "Trained on 15 disease and healthy classes across Tomato, Potato, and Bell Pepper.",
+    "benefit2Title": "Grad-CAM Visual Explainability",
+    "benefit2Desc": "See the exact leaf regions driving every AI diagnosis with transparent heatmap overlays.",
+    "benefit3Title": "Human-in-the-Loop Officer Review",
+    "benefit3Desc": "Uncertain predictions are routed to district Agricultural Officers for expert verification.",
+    "login": {
+      "title": "Welcome back",
+      "subtitle": "Sign in to your AgroLens AI workspace",
+      "emailLabel": "Email address",
+      "emailPlaceholder": "you@example.com",
+      "passwordLabel": "Password",
+      "passwordPlaceholder": "Enter your password",
+      "rememberMe": "Remember me on this device",
+      "submitBtn": "Sign In",
+      "submitting": "Signing in...",
+      "noAccount": "Don't have an account?",
+      "createAccountLink": "Create an account",
+      "welcomeToast": "Welcome back to AgroLens AI!",
+      "errors": {
+        "emailRequired": "Email address is required",
+        "emailInvalid": "Please enter a valid email address",
+        "passwordRequired": "Password is required",
+        "invalidCredentials": "Invalid email or password",
+        "accountLocked": "Account locked. Try again in 15 minutes.",
+        "rateLimited": "Too many attempts. Please try again later."
+      }
+    },
+    "register": {
+      "title": "Create your account",
+      "subtitle": "Join AgroLens AI as a Farmer or Agricultural Officer",
+      "fullNameLabel": "Full name",
+      "fullNamePlaceholder": "e.g. Kasun Perera",
+      "emailLabel": "Email address",
+      "emailPlaceholder": "kasun@example.com",
+      "passwordLabel": "Password",
+      "passwordPlaceholder": "At least 8 characters",
+      "confirmPasswordLabel": "Confirm password",
+      "confirmPasswordPlaceholder": "Re-enter your password",
+      "roleLabel": "Select your role",
+      "roleFarmerTitle": "Farmer",
+      "roleFarmerDesc": "Upload leaf photos & get treatment advice",
+      "roleOfficerTitle": "Agricultural Officer",
+      "roleOfficerDesc": "Review & verify crop disease diagnoses",
+      "districtLabel": "Sri Lankan District",
+      "districtPlaceholder": "Search or select your district...",
+      "districtSearchPlaceholder": "Type to filter 25 districts...",
+      "districtNoResults": "No matching district found",
+      "languageLabel": "Preferred Advisory Language",
+      "langEn": "English",
+      "langSi": "සිංහල (Sinhala)",
+      "submitBtn": "Create Account",
+      "submitting": "Creating account...",
+      "hasAccount": "Already have an account?",
+      "signInLink": "Sign in here",
+      "successToast": "Account created successfully! Please sign in.",
+      "errors": {
+        "fullNameRequired": "Full name must be at least 2 characters",
+        "emailRequired": "Email address is required",
+        "emailInvalid": "Please enter a valid email address",
+        "passwordLength": "Password must be at least 8 characters",
+        "passwordComplexity": "Password must contain at least one letter and one number",
+        "passwordEqualsEmail": "Password cannot be the same as your email address",
+        "passwordMismatch": "Passwords do not match",
+        "roleRequired": "Please select either Farmer or Agricultural Officer",
+        "districtRequired": "Please select your district"
+      }
+    }
+  },
+  "passwordStrength": {
+    "label": "Password strength",
+    "weak": "Weak",
+    "fair": "Fair",
+    "good": "Good",
+    "strong": "Strong",
+    "ruleLength": "8+ characters",
+    "ruleLetter": "At least one letter",
+    "ruleNumber": "At least one number"
+  },
+  "dashboard": {
+    "welcome": "Welcome back",
+    "roleBadge": "Role",
+    "districtBadge": "District",
+    "farmerTitle": "Farmer Diagnostic Dashboard",
+    "officerTitle": "Agricultural Officer Review Workspace",
+    "adminTitle": "Administrator Control Center",
+    "comingSoonBadge": "Workspace Ready",
+    "placeholderDesc": "Monitor your crop health diagnostics, Grad-CAM insights, and recent leaf scans.",
+    "scanCtaTitle": "Detect Crop Leaf Disease Instantly",
+    "scanCtaDesc": "Upload or snap a photo of a Tomato, Potato, or Bell Pepper leaf to run MobileNetV2 inference and Grad-CAM lesion analysis.",
+    "scanCtaButton": "Scan a Leaf Now",
+    "stats": {
+      "totalScans": "Total Scans",
+      "healthyResults": "Healthy Leaves",
+      "diseasesDetected": "Diseases Detected",
+      "pendingReview": "Pending Officer Review"
+    },
+    "recentScans": {
+      "title": "Recent Leaf Scans",
+      "subtitle": "Your last 5 crop diagnoses",
+      "viewAll": "View All History",
+      "viewDetails": "View Result",
+      "confidence": "Confidence"
+    },
+    "chart": {
+      "title": "Scans by Condition",
+      "subtitle": "Distribution of your diagnosed crop leaf results",
+      "countLabel": "Scans"
+    },
+    "empty": {
+      "title": "No Leaf Scans Yet",
+      "subtitle": "Upload your first Tomato, Potato, or Bell Pepper leaf photo to get an instant AI diagnosis and treatment guide.",
+      "actionBtn": "Scan Your First Leaf"
+    },
+    "error": {
+      "title": "Failed to load dashboard data",
+      "retryBtn": "Retry"
+    },
+    "comingSoonModule": "Coming soon in next milestone"
+  },
+  "newScan": {
+    "pageTitle": "New Leaf Scan",
+    "pageSubtitle": "Upload a clear photo of a single Tomato, Potato, or Bell Pepper leaf for AI disease detection.",
+    "dropzoneTitle": "Drag & drop your leaf photo here",
+    "dropzoneSubtitle": "Supports JPG, JPEG, or PNG up to 5MB",
+    "choosePhotoBtn": "Choose Photo",
+    "takePhotoBtn": "Take Photo",
+    "previewTitle": "Selected Leaf Photo",
+    "replacePhotoBtn": "Replace Photo",
+    "removePhotoBtn": "Remove",
+    "fileSizeLabel": "Size",
+    "analyzeBtn": "Analyze Leaf",
+    "tips": {
+      "title": "Tips for an Accurate Diagnosis",
+      "subtitle": "Follow these field photography guidelines for the best AI accuracy",
+      "tip1Title": "Single Leaf Only",
+      "tip1Desc": "Center one affected leaf clearly in the frame rather than the whole plant.",
+      "tip2Title": "Good Natural Light",
+      "tip2Desc": "Take the photo in bright daylight without harsh shadows or camera flash glare.",
+      "tip3Title": "Plain Background",
+      "tip3Desc": "Hold the leaf against a neutral surface or soil so the edges are clearly visible.",
+      "tip4Title": "Keep Leaf in Focus",
+      "tip4Desc": "Make sure spots, yellowing, or lesions on the leaf blade are sharp and not blurry."
+    },
+    "progress": {
+      "title": "Processing Your Leaf Specimen...",
+      "step1": "Uploading high-resolution leaf photo...",
+      "step2": "Running MobileNetV2 disease classification...",
+      "step3": "Generating Grad-CAM explainability heatmap..."
+    },
+    "errors": {
+      "invalidType": "Invalid file format. Please select a JPG, JPEG, or PNG image.",
+      "tooLarge": "Image exceeds the 5MB size limit. Please choose a smaller photo.",
+      "noFile": "Please select a leaf photo before analyzing.",
+      "uploadFailed": "Failed to analyze leaf image. Please try again."
+    },
+    "successToast": "Leaf diagnosis and Grad-CAM heatmap ready!"
+  },
+  "scanResult": {
+    "pageTitle": "Diagnosis Result",
+    "backToHistory": "Back to History",
+    "cropLabel": "Crop",
+    "scannedOn": "Scanned on",
+    "districtLabel": "District",
+    "confidenceTitle": "AI Confidence Score",
+    "highConfidence": "High Confidence (≥85%)",
+    "moderateConfidence": "Moderate Confidence (70–84%)",
+    "lowConfidence": "Low Confidence (<70%)",
+    "pendingReviewNoticeTitle": "Queued for Agricultural Officer Verification",
+    "pendingReviewNoticeDesc": "Because the AI confidence score is below 70%, this scan has been automatically marked as Pending Review. A district Agricultural Officer will inspect your leaf photo and confirm or correct the diagnosis.",
+    "officerReviewTitle": "Officer Review",
+    "officerConfirmedLabel": "Final Diagnosis",
+    "officerNotesLabel": "Officer Notes",
+    "officerNameLabel": "Reviewed by",
+    "officerDateLabel": "Reviewed on",
+    "aiPredictionWasLabel": "AI prediction",
+    "visualComparisonTitle": "Visual & Grad-CAM Explainability",
+    "viewSideBySide": "Side-by-Side",
+    "viewSlider": "Interactive Slider",
+    "viewHeatmapOnly": "Heatmap Only",
+    "originalImageLabel": "Original Leaf Photo",
+    "heatmapImageLabel": "Grad-CAM Activation Overlay",
+    "whatIsHeatmapTitle": "What is this Grad-CAM heatmap?",
+    "whatIsHeatmapDesc": "Grad-CAM (Gradient-weighted Class Activation Mapping) highlights the exact regions of the leaf that our MobileNetV2 neural network focused on. Warm red and yellow areas indicate strong disease lesion activation, while cool blue areas had minimal influence.",
+    "top3Title": "Top 3 Model Predictions",
+    "top3Subtitle": "Probability distribution across the top matching classes",
+    "treatmentSectionTitle": "Agronomic Advisory & Management",
+    "tabs": {
+      "symptoms": "Symptoms",
+      "treatment": "Treatment",
+      "prevention": "Prevention"
+    },
+    "verifyingNoticeTitle": "Information Being Verified",
+    "verifyingNoticeDesc": "Official symptoms, treatment dosages, and prevention guidelines for this condition are currently being verified against Department of Agriculture (Sri Lanka) sources. Please consult your district Agricultural Officer before applying chemical treatments.",
+    "disclaimerTitle": "Important Advisory Disclaimer",
+    "actions": {
+      "scanAnother": "Scan Another Leaf",
+      "askAiAssistant": "Ask AI Assistant",
+      "comingSoonTooltip": "Gemini AI Advisory Chatbot coming soon",
+      "downloadReport": "Download Report"
+    }
+  },
+  "history": {
+    "pageTitle": "Scan History",
+    "pageSubtitle": "Browse and filter all your past crop leaf diagnoses",
+    "newScanBtn": "New Scan",
+    "searchPlaceholder": "Search by crop or disease name...",
+    "filters": {
+      "all": "All Scans",
+      "auto": "Auto-Verified",
+      "pending_review": "Pending review",
+      "confirmed": "Confirmed by officer",
+      "corrected": "Corrected by officer"
+    },
+    "table": {
+      "leaf": "Leaf",
+      "disease": "Detected Condition",
+      "confidence": "Confidence",
+      "status": "Status",
+      "date": "Date",
+      "action": "Action",
+      "view": "View"
+    },
+    "empty": {
+      "title": "No matching scans found",
+      "subtitle": "Try adjusting your search or status filter, or upload a new leaf photo to get started."
+    }
+  },
+  "notifications": {
+    "title": "Notifications",
+    "markAllRead": "Mark all as read",
+    "empty": "No notifications yet",
+    "unreadBadge": "unread"
+  },
+  "officer": {
+    "dashboard": {
+      "greetingPrefix": "Welcome, Officer",
+      "districtSubtitle": "Reviewing uncertain field leaf diagnoses and supporting farmers in",
+      "openQueueBtn": "Open Review Queue",
+      "stats": {
+        "pendingInDistrict": "Pending in My District",
+        "reviewedToday": "Reviewed Today",
+        "totalReviewed": "Total Reviewed",
+        "confirmedVsCorrected": "Confirmed vs Corrected",
+        "confirmed": "Confirmed",
+        "corrected": "Corrected"
+      },
+      "chart": {
+        "title": "Confirmed vs Corrected Breakdown",
+        "subtitle": "Your expert verification decisions on AI predictions",
+        "empty": "Review your first case to see breakdown chart"
+      },
+      "oldestPending": {
+        "title": "Oldest Pending Cases",
+        "subtitle": "Priority queue waiting longest for verification in your district",
+        "viewAll": "View Full Queue",
+        "reviewNow": "Review now",
+        "farmer": "Farmer",
+        "waiting": "Waiting",
+        "emptyTitle": "No pending cases — great work!",
+        "emptySubtitle": "All low-confidence scans in your district have been verified."
+      }
+    },
+    "queue": {
+      "pageTitle": "Review Queue",
+      "pageSubtitle": "Inspect low-confidence (<70%) leaf diagnoses and verify or correct disease labels.",
+      "districtFilterLabel": "District",
+      "myDistrictOption": "My District",
+      "allDistrictsOption": "All Districts",
+      "cropFilterLabel": "Crop",
+      "allCropsOption": "All Crops",
+      "cropTomato": "Tomato",
+      "cropPotato": "Potato",
+      "cropPepper": "Bell Pepper",
+      "farmerLabel": "Farmer",
+      "districtLabel": "District",
+      "aiPredictionLabel": "AI Prediction",
+      "confidenceLabel": "Confidence",
+      "reviewNowBtn": "Review now",
+      "emptyTitle": "No pending cases — great work!",
+      "emptySubtitle": "There are no pending leaf scans matching your selected filters.",
+      "prevPage": "Previous",
+      "nextPage": "Next",
+      "pageInfo": "Page"
+    },
+    "review": {
+      "pageTitle": "Review Leaf Diagnosis",
+      "backToQueue": "Back to Queue",
+      "farmerLabel": "Farmer",
+      "districtLabel": "District",
+      "dateLabel": "Submitted",
+      "aiPredictionTitle": "AI Model Prediction",
+      "confidenceTitle": "Model Confidence",
+      "top3Title": "Top 3 Model Predictions",
+      "panelTitle": "Officer Verification Decision",
+      "panelSubtitle": "Confirm if the AI prediction matches the leaf lesions, or select the correct disease class.",
+      "confirmBtn": "Confirm diagnosis",
+      "correctBtn": "Correct diagnosis",
+      "selectClassLabel": "Select Correct Disease Class",
+      "searchClassPlaceholder": "Search crop or disease name...",
+      "noClassMatch": "No matching disease class found",
+      "notesLabel": "Agronomic Notes (Optional)",
+      "notesPlaceholder": "Add field observations, lesion notes, or advice for the farmer...",
+      "submitBtn": "Submit Review",
+      "submittingBtn": "Submitting...",
+      "alreadyReviewedTitle": "Case Already Reviewed",
+      "alreadyReviewedDesc": "This diagnosis has already been verified and locked.",
+      "modal": {
+        "title": "Confirm Review Submission",
+        "confirmDesc": "You are about to confirm the AI model's diagnosis and notify the farmer.",
+        "correctDesc": "You are about to override the AI model's prediction with your expert correction and notify the farmer.",
+        "actionLabel": "Decision",
+        "actionConfirm": "Confirm AI Diagnosis",
+        "actionCorrect": "Correct Diagnosis",
+        "finalDiseaseLabel": "Final Verified Disease",
+        "notesLabel": "Officer Notes",
+        "noNotes": "No additional notes provided",
+        "cancelBtn": "Cancel",
+        "confirmSubmitBtn": "Confirm & Submit"
+      },
+      "toastConfirmSuccess": "Diagnosis confirmed! Farmer has been notified.",
+      "toastCorrectSuccess": "Diagnosis corrected! Farmer has been notified.",
+      "toastLoadingNext": "Loaded next pending case in queue."
+    },
+    "reviewed": {
+      "pageTitle": "Reviewed Cases",
+      "pageSubtitle": "History of leaf diagnoses you have confirmed or corrected",
+      "emptyTitle": "No reviewed cases yet",
+      "emptySubtitle": "Cases you confirm or correct from the Review Queue will appear here.",
+      "goToQueueBtn": "Go to Review Queue",
+      "confirmedBadge": "Confirmed",
+      "correctedBadge": "Corrected",
+      "table": {
+        "leaf": "Leaf",
+        "farmer": "Farmer & District",
+        "action": "Action",
+        "labels": "AI Label vs Officer Label",
+        "date": "Reviewed Date",
+        "view": "View"
+      }
+    },
+    "waitingApproval": {
+      "badge": "Pending Admin Verification",
+      "title": "Your Officer Account is Waiting for Admin Approval",
+      "subtitle": "Thank you for registering as an Agricultural Officer on AgroLens AI. An administrator is reviewing your district credentials before activating your diagnostic review queue.",
+      "districtLabel": "Assigned District",
+      "emailLabel": "Registered Email",
+      "registeredLabel": "Registered On",
+      "checkStatusBtn": "Check Approval Status",
+      "checkingBtn": "Checking...",
+      "stillPendingToast": "Your officer account is still awaiting administrator approval.",
+      "approvedToast": "Your officer account has been approved! Welcome aboard."
+    }
+  },
+  "admin": {
+    "common": {
+      "search": "Search...",
+      "resetFilters": "Reset Filters",
+      "allRoles": "All Roles",
+      "allDistricts": "All Districts",
+      "allCrops": "All Crops",
+      "allStatuses": "All Statuses",
+      "save": "Save Changes",
+      "saving": "Saving...",
+      "cancel": "Cancel",
+      "delete": "Delete",
+      "edit": "Edit",
+      "view": "View",
+      "close": "Close",
+      "retry": "Retry",
+      "page": "Page",
+      "prev": "Previous",
+      "next": "Next",
+      "total": "Total",
+      "active": "Active",
+      "inactive": "Inactive",
+      "pendingApproval": "Pending approval",
+      "verified": "Verified",
+      "unverified": "Unverified"
+    },
+    "overview": {
+      "pageTitle": "Admin Overview",
+      "bannerBadge": "System Control Center",
+      "bannerTitle": "AgroLens AI Platform Administration",
+      "bannerDesc": "Monitor system-wide crop diagnoses, verify Department of Agriculture treatment guidelines, and manage farmers and district Agricultural Officers.",
+      "kpi": {
+        "farmers": "Registered Farmers",
+        "officers": "Agricultural Officers",
+        "totalScans": "Total Leaf Scans",
+        "scansToday": "Scans Today",
+        "pendingReviews": "Pending Officer Reviews",
+        "pendingApprovals": "Pending Officer Approvals",
+        "unverifiedTreatments": "Unverified Treatments"
+      },
+      "charts": {
+        "scansOverTimeTitle": "Leaf Scans Over the Last 30 Days",
+        "scansOverTimeSubtitle": "Daily diagnostic volume across Sri Lanka",
+        "topDiseasesTitle": "Top Detected Diseases",
+        "topDiseasesSubtitle": "Final diagnosis counts across all scans",
+        "districtsTitle": "Scans by District",
+        "districtsSubtitle": "Geographic distribution of leaf submissions",
+        "decisionsTitle": "Officer Confirmed vs Corrected",
+        "decisionsSubtitle": "Human-in-the-loop verification breakdown",
+        "confirmed": "Confirmed",
+        "corrected": "Corrected",
+        "scansCount": "Scans"
+      },
+      "attention": {
+        "title": "Needs Attention",
+        "subtitle": "Pending administrative actions requiring your review",
+        "officersWaitingTitle": "Officers Waiting for Approval",
+        "officersWaitingDesc": "Agricultural Officer accounts awaiting credential verification",
+        "reviewOfficersBtn": "Review Approvals",
+        "unverifiedTreatmentsTitle": "Unverified Disease Treatments",
+        "unverifiedTreatmentsDesc": "Treatment records with placeholder or unverified Sinhala/English advisory text",
+        "verifyTreatmentsBtn": "Manage Treatments",
+        "allClearTitle": "Everything is up to date",
+        "allClearDesc": "No pending officer approvals or unverified treatments right now."
+      }
+    },
+    "users": {
+      "pageTitle": "User Management",
+      "pageSubtitle": "Manage farmers, district Agricultural Officers, and platform administrators",
+      "addUserBtn": "Add User",
+      "searchPlaceholder": "Search by name or email...",
+      "statusAll": "All Statuses",
+      "statusActive": "Active",
+      "statusInactive": "Inactive",
+      "statusPending": "Pending Approval",
+      "sortNewest": "Newest First",
+      "sortOldest": "Oldest First",
+      "sortName": "Name (A–Z)",
+      "table": {
+        "user": "User",
+        "role": "Role",
+        "district": "District",
+        "status": "Status",
+        "joined": "Joined Date",
+        "actions": "Actions"
+      },
+      "actions": {
+        "view": "View Details",
+        "edit": "Edit User",
+        "resetPassword": "Reset Password",
+        "activate": "Activate",
+        "deactivate": "Deactivate",
+        "delete": "Delete",
+        "selfProtectedTooltip": "You cannot modify the role or active status of your own admin account"
+      },
+      "drawer": {
+        "title": "User Profile & Activity",
+        "scanCount": "Total Leaf Scans",
+        "reviewCount": "Officer Reviews Completed",
+        "approvedBy": "Approved By Admin ID",
+        "approvedAt": "Approved On",
+        "updatedAt": "Last Updated"
+      },
+      "createModal": {
+        "title": "Create New User Account",
+        "subtitle": "Create a Farmer, Agricultural Officer, or Administrator account",
+        "createBtn": "Create User"
+      },
+      "editModal": {
+        "title": "Edit User Account",
+        "subtitle": "Update profile details, role, district, or account status"
+      },
+      "passwordModal": {
+        "title": "Reset User Password",
+        "subtitle": "Set a new password for",
+        "newPasswordLabel": "New Password (min 6 characters)",
+        "newPasswordPlaceholder": "Enter new password...",
+        "submitBtn": "Reset Password"
+      },
+      "deleteModal": {
+        "title": "Delete User Account",
+        "description": "This will deactivate and soft-delete the user's account so they can no longer sign in. Please type the user's full name below to confirm.",
+        "typePrompt": "Type full name to confirm",
+        "confirmBtn": "Delete User"
+      },
+      "toasts": {
+        "created": "User account created successfully",
+        "updated": "User account updated",
+        "passwordReset": "Password has been reset",
+        "deleted": "User account deactivated and deleted"
+      }
+    },
+    "approvals": {
+      "pageTitle": "Officer Approvals",
+      "pageSubtitle": "Verify and approve newly registered Agricultural Officers before they can review diagnoses",
+      "pendingCountBadge": "Pending Approval",
+      "registeredLabel": "Registered",
+      "districtLabel": "District",
+      "approveBtn": "Approve Officer",
+      "rejectBtn": "Reject",
+      "emptyTitle": "No Pending Officer Approvals",
+      "emptySubtitle": "All registered Agricultural Officers have been reviewed.",
+      "confirmApproveTitle": "Approve Agricultural Officer",
+      "confirmApproveDesc": "This will grant the officer full access to inspect and verify pending leaf diagnoses in their district.",
+      "confirmRejectTitle": "Reject Officer Approval",
+      "confirmRejectDesc": "This will keep the officer account unapproved and restrict access to the officer review queue.",
+      "toasts": {
+        "approved": "Agricultural Officer approved!",
+        "rejected": "Officer approval rejected."
+      }
+    },
+    "treatments": {
+      "pageTitle": "Treatments Management",
+      "pageSubtitle": "Maintain bilingual symptoms, chemical/organic treatments, and DOA verification status",
+      "addBtn": "Add Treatment",
+      "searchPlaceholder": "Search by disease key, English or Sinhala name...",
+      "filterAll": "All Treatments",
+      "filterVerified": "Verified Only",
+      "filterUnverified": "Unverified Only",
+      "placeholderWarningBadge": "Contains 'TO BE VERIFIED'",
+      "table": {
+        "crop": "Crop",
+        "disease": "Disease (EN / SI)",
+        "verified": "Verification",
+        "source": "Source",
+        "updated": "Last Updated",
+        "actions": "Actions"
+      },
+      "verifyBtn": "Mark as Verified",
+      "verifyDisabledTooltip": "Replace all 'TO BE VERIFIED' placeholders in English and Sinhala fields before verifying",
+      "modal": {
+        "createTitle": "Create Disease Treatment",
+        "editTitle": "Edit Disease Treatment",
+        "subtitle": "Provide accurate English and Sinhala agronomic guidance",
+        "tabEn": "English",
+        "tabSi": "සිංහල (Sinhala)",
+        "diseaseKeyLabel": "Disease Class Key (from class_names.json)",
+        "selectDiseaseKey": "Select a disease class...",
+        "cropLabel": "Crop Name",
+        "sourceLabel": "Official Source Attribution",
+        "isHealthyLabel": "This class represents a Healthy Leaf (no disease)",
+        "diseaseNameEn": "Disease Name (English)",
+        "symptomsEn": "Symptoms (English)",
+        "treatmentEn": "Treatment Recommendations (English)",
+        "preventionEn": "Prevention Guidelines (English)",
+        "diseaseNameSi": "Disease Name (Sinhala / සිංහල)",
+        "symptomsSi": "Symptoms (Sinhala / සිංහල)",
+        "treatmentSi": "Treatment Recommendations (Sinhala / සිංහල)",
+        "preventionSi": "Prevention Guidelines (Sinhala / සිංහල)",
+        "placeholderAlert": "This field still contains 'TO BE VERIFIED'. Update it with verified text before marking as verified."
+      },
+      "deleteModal": {
+        "title": "Delete Treatment Entry",
+        "description": "Are you sure you want to permanently delete this treatment record?"
+      },
+      "toasts": {
+        "created": "Treatment created successfully",
+        "updated": "Treatment updated successfully",
+        "verified": "Treatment marked as verified!",
+        "deleted": "Treatment deleted"
+      }
+    },
+    "diagnoses": {
+      "pageTitle": "All Diagnoses",
+      "pageSubtitle": "Inspect, filter, and manage leaf scans submitted across all 25 districts",
+      "searchPlaceholder": "Search by farmer name or email...",
+      "dateFrom": "From Date",
+      "dateTo": "To Date",
+      "table": {
+        "leaf": "Leaf",
+        "farmer": "Farmer",
+        "district": "District",
+        "aiPrediction": "AI Prediction",
+        "confidence": "Confidence",
+        "finalLabel": "Final Label",
+        "status": "Status",
+        "date": "Date",
+        "actions": "Actions"
+      },
+      "drawer": {
+        "title": "Diagnosis Inspection",
+        "farmerInfo": "Farmer & Submission Info",
+        "aiPrediction": "AI Model Prediction",
+        "finalDiagnosis": "Final Effective Diagnosis",
+        "officerReview": "Agricultural Officer Review",
+        "notReviewedYet": "Not reviewed by an officer yet",
+        "deleteBtn": "Delete Diagnosis"
+      },
+      "deleteModal": {
+        "title": "Delete Diagnosis & Image Files",
+        "description": "This will permanently delete the diagnosis record, its uploaded leaf photo, Grad-CAM heatmap file, and any related notifications."
+      },
+      "toasts": {
+        "deleted": "Diagnosis and associated image files deleted"
+      }
+    },
+    "model": {
+      "pageTitle": "Model Performance",
+      "pageSubtitle": "MobileNetV2 evaluation metrics, human-in-the-loop officer agreement rate, and retraining feedback export",
+      "exportCsvBtn": "Export Feedback CSV",
+      "exportingBtn": "Exporting...",
+      "kpi": {
+        "accuracy": "Test Accuracy",
+        "precision": "Macro Precision",
+        "recall": "Macro Recall",
+        "f1": "Macro F1-Score"
+      },
+      "agreement": {
+        "title": "Officer Agreement Rate",
+        "subtitle": "Percentage of officer-reviewed scans where the AI prediction was confirmed",
+        "totalReviewed": "Total Reviewed by Officers",
+        "confirmed": "Confirmed Accurate",
+        "corrected": "Corrected by Officer",
+        "noReviewsYet": "No officer reviews recorded yet"
+      },
+      "correctedChart": {
+        "title": "Most Corrected Disease Classes",
+        "subtitle": "Classes most frequently overridden by Agricultural Officers during field review",
+        "empty": "No model corrections recorded yet — 100% agreement on reviewed scans.",
+        "mostCommonTrue": "Most often corrected to"
+      },
+      "classes": {
+        "title": "Supported Disease Classes",
+        "subtitle": "15 PlantVillage classes across Tomato, Potato, and Bell Pepper"
+      },
+      "toasts": {
+        "exported": "Downloaded training_feedback.csv"
+      }
+    },
+    "auditLog": {
+      "pageTitle": "Admin Audit Log",
+      "pageSubtitle": "Immutable chronological record of all administrative actions",
+      "allActions": "All Action Types",
+      "allTargets": "All Target Types",
+      "table": {
+        "timestamp": "Timestamp",
+        "admin": "Administrator",
+        "action": "Action",
+        "target": "Target",
+        "details": "Details",
+        "ipAddress": "IP Address"
+      },
+      "emptyTitle": "No Audit Log Entries",
+      "emptySubtitle": "Administrative actions will appear here as they are performed."
+    },
+    "security": {
+      "pageTitle": "Security & Access Control",
+      "pageSubtitle": "Manage system credentials, active admin accounts, and security safeguards.",
+      "kpi": {
+        "activeAdmins": "Active Admins",
+        "authProtocol": "Auth Protocol",
+        "sessionRole": "Session Role",
+        "accountStatus": "Self Status"
+      },
+      "passwordForm": {
+        "title": "Change Admin Password",
+        "subtitle": "Update your administrative login credentials.",
+        "adminEmail": "Admin Email",
+        "newPassword": "New Password",
+        "confirmPassword": "Confirm New Password",
+        "submitBtn": "Update Password"
+      },
+      "errors": {
+        "passwordTooShort": "Password must be at least 8 characters with a letter and a number",
+        "passwordMismatch": "Passwords do not match"
+      },
+      "toasts": {
+        "passwordUpdated": "Your admin password has been updated successfully!",
+        "sessionRevoked": "Session revoked successfully",
+        "accountUnlocked": "Account unlocked successfully"
+      },
+      "summary": {
+        "failedLoginsToday": "Failed Logins Today",
+        "activeSessions": "Active Sessions",
+        "lockedAccounts": "Locked Accounts"
+      },
+      "events": {
+        "title": "Login Events",
+        "email": "Email",
+        "status": "Status",
+        "success": "Success",
+        "failed": "Failed",
+        "reason": "Reason",
+        "ip": "IP Address",
+        "date": "Date",
+        "searchEmail": "Filter by email...",
+        "filterStatus": "Filter by status",
+        "filterAll": "All Attempts",
+        "emptyTitle": "No login events found",
+        "emptySubtitle": "Try adjusting your email or status filters."
+      },
+      "sessions": {
+        "title": "Active Sessions",
+        "user": "User",
+        "ip": "IP Address",
+        "userAgent": "Device / Browser",
+        "createdAt": "Started",
+        "expiresAt": "Expires",
+        "actions": "Action",
+        "forceLogout": "Force logout",
+        "confirmTitle": "Force Logout Session",
+        "confirmDesc": "Are you sure you want to revoke this session and force the user to sign in again?",
+        "emptyTitle": "No active sessions",
+        "emptySubtitle": "Active user sessions will appear here."
+      },
+      "locked": {
+        "title": "Locked Accounts",
+        "user": "Account",
+        "failedCount": "Failed Attempts",
+        "lockedUntil": "Locked Until",
+        "actions": "Action",
+        "unlockBtn": "Unlock",
+        "emptyTitle": "No locked accounts",
+        "emptySubtitle": "No user accounts are currently locked due to failed login attempts."
+      },
+      "policies": {
+        "title": "System Security Safeguards",
+        "selfProtected": "Self-Protection Policy:",
+        "selfProtectedDesc": "Administrators cannot deactivate, delete, or demote their own account to prevent accidental lockouts.",
+        "lastAdmin": "Last Active Admin Guard:",
+        "lastAdminDesc": "The backend rejects any deactivation or deletion that would leave zero active administrators.",
+        "officerGate": "Officer Approval Gate:",
+        "officerGateDesc": "Newly registered Agricultural Officers cannot view farmer records or review queues until approved.",
+        "auditLogs": "Audit Immutability:",
+        "auditLogsDesc": "Every administrative change is stamped with the acting administrator's ID and client IP address."
+      },
+      "adminsList": {
+        "title": "Active Administrator Accounts",
+        "you": "YOU"
+      }
+    }
+  },
+  "profile": {
+    "pageTitle": "My Profile",
+    "pageSubtitle": "Your registered AgroLens AI account details and preferences",
+    "accountCardTitle": "Account Information",
+    "fullName": "Full Name",
+    "email": "Email Address",
+    "role": "Account Role",
+    "district": "Registered District",
+    "preferredLanguage": "Preferred Advisory Language",
+    "memberSince": "Member Since",
+    "uiLanguageTitle": "Interface Language Preference",
+    "uiLanguageDesc": "Switch between English and Sinhala across the AgroLens AI platform.",
+    "devicesCardTitle": "Active Sessions",
+    "devicesCardDesc": "Sign out of all active sessions across your phones, tablets, and computers.",
+    "logoutAllBtn": "Log out of all devices",
+    "logoutAllConfirmTitle": "Log out of all devices?",
+    "logoutAllConfirmDesc": "This will immediately revoke all active sessions on every device and sign you out.",
+    "logoutAllConfirmBtn": "Log out of all devices",
+    "logoutAllCancelBtn": "Cancel",
+    "logoutAllToast": "Logged out from all devices"
+  },
+  "idleTimeout": {
+    "title": "Session Timeout Warning",
+    "description": "You have been inactive. For your security, you will be automatically logged out in",
+    "staySignedIn": "Stay signed in",
+    "logoutNow": "Log out"
+  },
+  "assistant": {
+    "pageTitle": "AI Assistant",
+    "headerTitle": "AgroLens Assistant",
+    "headerSubtitle": "Bilingual agricultural advisor for Sri Lankan crops",
+    "newChat": "New chat",
+    "conversationsTitle": "Conversations",
+    "openConversations": "Conversations",
+    "noConversations": "No conversations yet",
+    "noConversationsHint": "Start a new chat to get farming advice.",
+    "emptyTitle": "How can AgroLens Assistant help your crops today?",
+    "emptySubtitle": "Ask in English or Sinhala about leaf symptoms, disease prevention, watering, soil care, or post-diagnosis steps.",
+    "suggestedLabel": "Suggested questions",
+    "suggestions": [
+      "Why do my leaves turn yellow?",
+      "How can I prevent leaf diseases?",
+      "When should I water tomatoes?",
+      "What should I do after a disease is found?"
+    ],
+    "inputPlaceholder": "Ask about crops, leaf diseases, watering, or soil care...",
+    "sendBtn": "Send",
+    "sending": "Sending...",
+    "disclaimer": "AI advice may be wrong. Consult an Agricultural Officer for important decisions.",
+    "retryBtn": "Retry",
+    "rateLimitError": "You have reached the hourly message limit (20 messages/hour). Please wait a little and try again.",
+    "networkError": "Could not reach AgroLens Assistant. Please check your connection and try again.",
+    "deleteConfirmTitle": "Delete Conversation",
+    "deleteConfirmDesc": "Are you sure you want to permanently delete this conversation?",
+    "deleteConfirmBtn": "Delete",
+    "deleteCancelBtn": "Cancel",
+    "deletedToast": "Conversation deleted",
+    "diagnosisContextBadge": "Linked to scan diagnosis"
+  },
+  "notFound": {
+    "code": "404",
+    "title": "Page not found",
+    "subtitle": "The page you are looking for doesn't exist or has been moved.",
+    "backHome": "Back to Home"
+  }
+}
