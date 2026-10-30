@@ -44,6 +44,13 @@
 - [Disclaimer](#️-disclaimer)
 
 ---
+## 📸 Screenshots
+
+| Dashboard | Result + Grad-CAM | AI Assistant |
+|---|---|---|
+| ![Dashboard](docs/screenshots/farmer-dashboard.png) | ![Result](docs/screenshots/result-gradcam.png) | ![AI Assistant](docs/screenshots/ai-assistant.png) |
+
+
 
 ## 📖 Overview
 
@@ -106,6 +113,22 @@ A farmer is unlikely to act on a label alone. Showing **where** on the leaf the 
 - **Responsive UI:** Sinhala / English interface for desktop and mobile.
 
 ---
+
+
+## 📸 Screenshots
+
+### Farmer Dashboard
+![Farmer Dashboard](docs/screenshots/3.jpeg)
+
+### AI Assistant (Sinhala)
+![AI Assistant](docs/screenshots/2.jpeg)
+
+### New Scan – Crop Selection
+![New Scan](docs/screenshots/1.jpeg)
+
+---
+
+
 
 ## 🧭 Example Walkthrough
 
@@ -470,3 +493,4 @@ This project is built for educational and portfolio purposes using the public **
 ⭐ If you find this project useful, please give it a star!
 
 </div>
+
