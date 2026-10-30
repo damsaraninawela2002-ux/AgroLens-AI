@@ -44,12 +44,6 @@
 - [Disclaimer](#️-disclaimer)
 
 ---
-## 📸 Screenshots
-
-| Dashboard | Result + Grad-CAM | AI Assistant |
-|---|---|---|
-| ![Dashboard](docs/screenshots/farmer-dashboard.png) | ![Result](docs/screenshots/result-gradcam.png) | ![AI Assistant](docs/screenshots/ai-assistant.png) |
-
 
 
 ## 📖 Overview
