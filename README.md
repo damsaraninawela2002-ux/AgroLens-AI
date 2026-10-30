@@ -484,7 +484,7 @@ This project is built for educational and portfolio purposes using the public **
 
 <div align="center">
 
-⭐ If you find this project useful, please give it a star!
+
 
 </div>
 
