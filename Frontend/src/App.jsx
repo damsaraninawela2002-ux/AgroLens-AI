@@ -26,6 +26,7 @@ import AdminApprovals from "./pages/admin/AdminApprovals";
 import AdminTreatments from "./pages/admin/AdminTreatments";
 import AdminDiagnoses from "./pages/admin/AdminDiagnoses";
 import AdminModelPerformance from "./pages/admin/AdminModelPerformance";
+import AssistantAnalytics from "./pages/admin/AssistantAnalytics";
 import AdminAuditLog from "./pages/admin/AdminAuditLog";
 import Security from "./pages/admin/Security";
 import NotFound from "./pages/NotFound";
@@ -215,6 +216,14 @@ export default function App() {
                 element={
                   <RoleRoute allowedRoles={["admin"]}>
                     <AdminModelPerformance />
+                  </RoleRoute>
+                }
+              />
+              <Route
+                path="/admin/assistant"
+                element={
+                  <RoleRoute allowedRoles={["admin"]}>
+                    <AssistantAnalytics />
                   </RoleRoute>
                 }
               />

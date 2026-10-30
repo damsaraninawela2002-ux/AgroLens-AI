@@ -1,3 +1,9 @@
+# Environment files (in every folder, except .env.example)
+**/.env
+**/.env.*
+**/.env.old
+!**/.env.example
+
 # Backend
 Backend/venv/
 Backend/.env

@@ -14,6 +14,12 @@ MODEL_METRICS_PATH = ML_MODELS_DIR / "model_metrics.json"
 
 IMG_SIZE = (224, 224)
 
+CROP_PREFIXES: dict[str, str] = {
+    "tomato": "Tomato",
+    "potato": "Potato",
+    "pepper": "Pepper,_bell",
+}
+
 
 class MLModelManager:
     model: Optional[tf.keras.Model] = None
@@ -82,14 +88,19 @@ def preprocess_image_bytes(image_bytes: bytes) -> tuple[np.ndarray, np.ndarray]:
     return orig_rgb, preprocessed_batch
 
 
-def predict(image_bytes: bytes) -> dict[str, Any]:
+def predict(image_bytes: bytes, crop: Optional[str] = None) -> dict[str, Any]:
     """
     Run disease classification on raw image bytes.
+    If `crop` ("tomato" | "potato" | "pepper") is given, restrict candidate classes
+    to that crop, renormalise their softmax probabilities, and compute `crop_match_score`
+    as the sum of the original probabilities of that crop's classes (0-100).
     Returns:
       - predicted_class: str
       - confidence: float (0-100, 2 decimals)
       - top3: list of {"class_name": str, "confidence": float}
-      - predicted_index: int
+      - predicted_index: int (index in full class_names list for Grad-CAM)
+      - crop: Optional[str]
+      - crop_match_score: Optional[float]
     """
     model = get_model()
     class_names = get_class_names()
@@ -99,6 +110,47 @@ def predict(image_bytes: bytes) -> dict[str, Any]:
     if isinstance(preds, (list, tuple)):
         preds = preds[0]
     probs = preds.numpy()[0]
+
+    crop_key = crop.strip().lower() if isinstance(crop, str) and crop.strip() else None
+    if crop_key is not None:
+        if crop_key not in CROP_PREFIXES:
+            raise ValueError(
+                f"Unsupported crop '{crop}'. Allowed values: tomato, potato, pepper."
+            )
+        prefix = CROP_PREFIXES[crop_key]
+        crop_indices = [
+            idx for idx, name in enumerate(class_names) if name.startswith(prefix)
+        ]
+        if not crop_indices:
+            raise ValueError(f"No model classes found for crop '{crop_key}'.")
+
+        crop_probs_raw = probs[crop_indices]
+        crop_prob_sum = float(np.sum(crop_probs_raw))
+        crop_match_score = round(float(np.clip(crop_prob_sum * 100.0, 0.0, 100.0)), 2)
+
+        if crop_prob_sum > 0.0:
+            renorm_probs = crop_probs_raw / crop_prob_sum
+        else:
+            renorm_probs = np.ones_like(crop_probs_raw) / len(crop_indices)
+
+        sorted_local_indices = np.argsort(renorm_probs)[::-1][:3]
+        top3 = [
+            {
+                "class_name": class_names[int(crop_indices[int(local_idx)])],
+                "confidence": round(float(renorm_probs[int(local_idx)]) * 100.0, 2),
+            }
+            for local_idx in sorted_local_indices
+        ]
+        top_idx = int(crop_indices[int(sorted_local_indices[0])])
+
+        return {
+            "predicted_class": top3[0]["class_name"],
+            "confidence": top3[0]["confidence"],
+            "top3": top3,
+            "predicted_index": top_idx,
+            "crop": crop_key,
+            "crop_match_score": crop_match_score,
+        }
 
     top3_indices = np.argsort(probs)[::-1][:3]
     top3 = [
@@ -115,4 +167,6 @@ def predict(image_bytes: bytes) -> dict[str, Any]:
         "confidence": top3[0]["confidence"],
         "top3": top3,
         "predicted_index": top_idx,
+        "crop": None,
+        "crop_match_score": None,
     }

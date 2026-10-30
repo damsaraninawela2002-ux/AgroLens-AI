@@ -71,5 +71,15 @@ AgroLens AI/
 └── README.md
 ```
 
+## Environment files
+
+Before sharing or pushing changes, check which environment files are tracked by Git:
+
+```powershell
+git ls-files | findstr .env
+```
+
+Only the example files (`Backend/.env.example` and `Frontend/.env.example`) should appear. Do not commit files containing real environment variables or secrets. This command checks tracked files only; it does not report untracked local `.env` files.
+
 ## Status
 **Status: In development**

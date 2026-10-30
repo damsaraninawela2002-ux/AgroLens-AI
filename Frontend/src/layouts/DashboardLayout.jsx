@@ -122,6 +122,8 @@ export default function DashboardLayout() {
     if (path === "/admin/treatments") return t("admin.treatments.pageTitle");
     if (path === "/admin/diagnoses") return t("admin.diagnoses.pageTitle");
     if (path === "/admin/model") return t("admin.model.pageTitle");
+    if (path === "/admin/assistant")
+      return t("admin.assistant.pageTitle") || t("sidebar.aiAssistant");
     if (path === "/admin/audit-log") return t("admin.auditLog.pageTitle");
     if (path === "/admin/security")
       return t("admin.security.pageTitle") || "Security & Access Control";
@@ -240,6 +242,12 @@ export default function DashboardLayout() {
       to: "/admin/model",
       label: t("sidebar.modelPerformance"),
       icon: Cpu,
+      disabled: false,
+    },
+    {
+      to: "/admin/assistant",
+      label: t("sidebar.aiAssistant"),
+      icon: Bot,
       disabled: false,
     },
     {

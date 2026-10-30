@@ -19,12 +19,18 @@ import Card from "../../components/ui/Card";
 import Button from "../../components/ui/Button";
 import Spinner from "../../components/ui/Spinner";
 import { useLanguage } from "../../context/LanguageContext";
-import { uploadLeafForPrediction } from "../../services/predictService";
+import api from "../../services/api";
 import { extractErrorMessage } from "../../utils/formatters";
 
 const MAX_SIZE_BYTES = 5 * 1024 * 1024; // 5MB
 const ALLOWED_MIME_TYPES = ["image/jpeg", "image/jpg", "image/png"];
 const ALLOWED_EXT_REGEX = /\.(jpe?g|png)$/i;
+
+const CROP_OPTIONS = [
+  { id: "tomato", emoji: "🍅", labelKey: "newScan.crops.tomato", fallback: "Tomato (තක්කාලි)" },
+  { id: "potato", emoji: "🥔", labelKey: "newScan.crops.potato", fallback: "Potato (අල)" },
+  { id: "pepper", emoji: "🫑", labelKey: "newScan.crops.pepper", fallback: "Bell Pepper (මාළු මිරිස්)" },
+];
 
 export default function NewScan() {
   const { t } = useLanguage();
@@ -33,6 +39,7 @@ export default function NewScan() {
   const fileInputRef = useRef(null);
   const cameraInputRef = useRef(null);
 
+  const [selectedCrop, setSelectedCrop] = useState("");
   const [file, setFile] = useState(null);
   const [previewUrl, setPreviewUrl] = useState("");
   const [dragActive, setDragActive] = useState(false);
@@ -134,6 +141,10 @@ export default function NewScan() {
   };
 
   const handleAnalyze = async () => {
+    if (!selectedCrop) {
+      setValidationError(t("newScan.errors.noCrop"));
+      return;
+    }
     if (!file) {
       setValidationError(t("newScan.errors.noFile"));
       return;
@@ -143,7 +154,17 @@ export default function NewScan() {
     setProgressStep(0);
     setAnalyzing(true);
     try {
-      const result = await uploadLeafForPrediction(file);
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("crop", selectedCrop);
+
+      const response = await api.post("/api/predict", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+      const result = response.data;
+
       toast.success(t("newScan.successToast"));
       const diagnosisId = result?.diagnosis?.id;
       if (diagnosisId) {
@@ -234,55 +255,115 @@ export default function NewScan() {
             </div>
           )}
 
-          {!file ? (
+          {/* Required Crop Selector (3 Large Cards) */}
+          <div className="space-y-2.5">
+            <label className="block text-sm font-extrabold text-slate-900">
+              {t("newScan.selectCropLabel")}
+            </label>
             <div
-              onDragOver={handleDragOver}
-              onDragLeave={handleDragLeave}
-              onDrop={handleDrop}
-              className={`rounded-2xl border-2 border-dashed p-8 sm:p-10 text-center transition-all ${
-                dragActive
-                  ? "border-[#166534] bg-emerald-50/80 scale-[1.01]"
-                  : "border-emerald-300/90 hover:border-[#166534] bg-[#f8faf5]"
-              }`}
+              role="radiogroup"
+              aria-label={t("newScan.selectCropLabel")}
+              className="grid grid-cols-1 sm:grid-cols-3 gap-3"
             >
-              <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-emerald-100/80 text-[#166534] flex items-center justify-center">
-                <UploadCloud className="w-8 h-8" />
+              {CROP_OPTIONS.map((cropOpt) => {
+                const isSelected = selectedCrop === cropOpt.id;
+                return (
+                  <button
+                    key={cropOpt.id}
+                    type="button"
+                    role="radio"
+                    aria-checked={isSelected}
+                    disabled={analyzing}
+                    onClick={() => {
+                      setSelectedCrop(cropOpt.id);
+                      if (validationError) setValidationError("");
+                    }}
+                    className={`relative flex flex-col items-center justify-center gap-2 p-4 rounded-2xl border-2 text-center transition-all cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed ${
+                      isSelected
+                        ? "border-[#166534] bg-emerald-50/90 text-[#166534] shadow-sm shadow-[#166534]/15"
+                        : "border-slate-200 hover:border-emerald-300 bg-[#f8faf5] text-slate-800"
+                    }`}
+                  >
+                    <span className="text-3xl leading-none" aria-hidden="true">
+                      {cropOpt.emoji}
+                    </span>
+                    <span className="text-xs sm:text-sm font-extrabold leading-snug">
+                      {t(cropOpt.labelKey) || cropOpt.fallback}
+                    </span>
+                    {isSelected && (
+                      <CheckCircle2 className="w-4 h-4 text-[#166534] absolute top-2.5 right-2.5" />
+                    )}
+                  </button>
+                );
+              })}
+            </div>
+            <p className="text-xs text-slate-500 leading-relaxed">
+              {t("newScan.supportedCropsHint")}
+            </p>
+          </div>
+
+          {!file ? (
+            <div className="space-y-4">
+              <div
+                onDragOver={handleDragOver}
+                onDragLeave={handleDragLeave}
+                onDrop={handleDrop}
+                className={`rounded-2xl border-2 border-dashed p-8 sm:p-10 text-center transition-all ${
+                  dragActive
+                    ? "border-[#166534] bg-emerald-50/80 scale-[1.01]"
+                    : "border-emerald-300/90 hover:border-[#166534] bg-[#f8faf5]"
+                }`}
+              >
+                <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-emerald-100/80 text-[#166534] flex items-center justify-center">
+                  <UploadCloud className="w-8 h-8" />
+                </div>
+
+                <h3 className="text-base sm:text-lg font-extrabold text-slate-900">
+                  {t("newScan.dropzoneTitle")}
+                </h3>
+                <p className="text-xs sm:text-sm text-slate-500 mt-1">
+                  {t("newScan.dropzoneSubtitle")}
+                </p>
+
+                <div className="mt-6 flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-3">
+                  <Button
+                    variant="primary"
+                    icon={ImagePlus}
+                    onClick={() => fileInputRef.current?.click()}
+                  >
+                    {t("newScan.choosePhotoBtn")}
+                  </Button>
+
+                  <Button
+                    variant="secondary"
+                    icon={Camera}
+                    onClick={() => cameraInputRef.current?.click()}
+                    className="sm:hidden"
+                  >
+                    {t("newScan.takePhotoBtn")}
+                  </Button>
+
+                  <Button
+                    variant="outline"
+                    icon={Camera}
+                    onClick={() => cameraInputRef.current?.click()}
+                    className="hidden sm:inline-flex"
+                  >
+                    {t("newScan.takePhotoBtn")}
+                  </Button>
+                </div>
               </div>
 
-              <h3 className="text-base sm:text-lg font-extrabold text-slate-900">
-                {t("newScan.dropzoneTitle")}
-              </h3>
-              <p className="text-xs sm:text-sm text-slate-500 mt-1">
-                {t("newScan.dropzoneSubtitle")}
-              </p>
-
-              <div className="mt-6 flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-3">
-                <Button
-                  variant="primary"
-                  icon={ImagePlus}
-                  onClick={() => fileInputRef.current?.click()}
-                >
-                  {t("newScan.choosePhotoBtn")}
-                </Button>
-
-                <Button
-                  variant="secondary"
-                  icon={Camera}
-                  onClick={() => cameraInputRef.current?.click()}
-                  className="sm:hidden"
-                >
-                  {t("newScan.takePhotoBtn")}
-                </Button>
-
-                <Button
-                  variant="outline"
-                  icon={Camera}
-                  onClick={() => cameraInputRef.current?.click()}
-                  className="hidden sm:inline-flex"
-                >
-                  {t("newScan.takePhotoBtn")}
-                </Button>
-              </div>
+              <Button
+                variant="primary"
+                size="lg"
+                fullWidth
+                icon={Sparkles}
+                disabled={!selectedCrop || !file || analyzing}
+                onClick={handleAnalyze}
+              >
+                {t("newScan.analyzeBtn")}
+              </Button>
             </div>
           ) : (
             <div className="space-y-4">
@@ -386,6 +467,7 @@ export default function NewScan() {
                   size="lg"
                   fullWidth
                   icon={Sparkles}
+                  disabled={!selectedCrop || !file || analyzing}
                   onClick={handleAnalyze}
                 >
                   {t("newScan.analyzeBtn")}

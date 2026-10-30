@@ -152,10 +152,16 @@ export default function ScanResult() {
       ? treatment.disease_name_en
       : formatDiseaseKey(effectiveClass, lang);
 
+  const selectedCropKey = (diagnosis.crop || "").toLowerCase();
   const cropName =
-    lang === "si"
+    selectedCropKey &&
+    ["tomato", "potato", "pepper"].includes(selectedCropKey)
+      ? t(`scanResult.crops.${selectedCropKey}`)
+      : lang === "si"
       ? getCropFromDiseaseKey(effectiveClass, "si")
       : treatment?.crop || getCropFromDiseaseKey(effectiveClass, "en");
+
+  const warningMessage = data?.warning || diagnosis?.warning || null;
 
   const confidenceValue = Number(diagnosis.confidence) || 0;
   const tone = getConfidenceTone(confidenceValue);
@@ -229,6 +235,26 @@ export default function ScanResult() {
           </Link>
         </div>
       </div>
+
+      {/* ================= CROP MISMATCH WARNING AMBER BANNER ================= */}
+      {warningMessage && (
+        <div
+          role="alert"
+          className="rounded-2xl bg-amber-50 border border-amber-300/90 p-4 sm:p-5 flex items-start gap-3.5 text-amber-950 shadow-xs print-card"
+        >
+          <div className="w-10 h-10 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center shrink-0">
+            <AlertTriangle className="w-5 h-5" />
+          </div>
+          <div className="space-y-1">
+            <h3 className="text-sm sm:text-base font-extrabold text-amber-900">
+              {t("scanResult.cropWarningTitle")}
+            </h3>
+            <p className="text-xs sm:text-sm text-amber-800/90 leading-relaxed font-semibold">
+              {warningMessage}
+            </p>
+          </div>
+        </div>
+      )}
 
       {/* ================= PENDING OFFICER REVIEW AMBER BANNER ================= */}
       {diagnosis.status === "pending_review" && (

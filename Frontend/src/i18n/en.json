@@ -318,6 +318,14 @@
   "newScan": {
     "pageTitle": "New Leaf Scan",
     "pageSubtitle": "Upload a clear photo of a single Tomato, Potato, or Bell Pepper leaf for AI disease detection.",
+    "selectCropLabel": "1. Select Crop (Required)",
+    "supportedCropsHint": "Supported crops: Tomato, Potato, Bell pepper. Choose the crop of the leaf you are uploading.",
+    "crops": {
+      "tomato": "Tomato (තක්කාලි)",
+      "potato": "Potato (අල)",
+      "pepper": "Bell Pepper (මාළු මිරිස්)"
+    },
+    "uploadStepLabel": "2. Upload Leaf Photo",
     "dropzoneTitle": "Drag & drop your leaf photo here",
     "dropzoneSubtitle": "Supports JPG, JPEG, or PNG up to 5MB",
     "choosePhotoBtn": "Choose Photo",
@@ -348,6 +356,7 @@
     "errors": {
       "invalidType": "Invalid file format. Please select a JPG, JPEG, or PNG image.",
       "tooLarge": "Image exceeds the 5MB size limit. Please choose a smaller photo.",
+      "noCrop": "Please select the crop of the leaf before analyzing.",
       "noFile": "Please select a leaf photo before analyzing.",
       "uploadFailed": "Failed to analyze leaf image. Please try again."
     },
@@ -357,6 +366,13 @@
     "pageTitle": "Diagnosis Result",
     "backToHistory": "Back to History",
     "cropLabel": "Crop",
+    "selectedCropLabel": "Selected Crop",
+    "cropWarningTitle": "Crop Match Warning",
+    "crops": {
+      "tomato": "Tomato (තක්කාලි)",
+      "potato": "Potato (අල)",
+      "pepper": "Bell Pepper (මාළු මිරිස්)"
+    },
     "scannedOn": "Scanned on",
     "districtLabel": "District",
     "confidenceTitle": "AI Confidence Score",
@@ -585,9 +601,13 @@
         "officers": "Agricultural Officers",
         "totalScans": "Total Leaf Scans",
         "scansToday": "Scans Today",
+        "aiChatsToday": "AI Chats Today",
         "pendingReviews": "Pending Officer Reviews",
         "pendingApprovals": "Pending Officer Approvals",
-        "unverifiedTreatments": "Unverified Treatments"
+        "unverifiedTreatments": "Unverified Treatments",
+        "geminiStatus": "Gemini Status",
+        "geminiOnline": "Online",
+        "geminiError": "Error"
       },
       "charts": {
         "scansOverTimeTitle": "Leaf Scans Over the Last 30 Days",
@@ -918,6 +938,46 @@
       "adminsList": {
         "title": "Active Administrator Accounts",
         "you": "YOU"
+      }
+    },
+    "assistant": {
+      "pageTitle": "AI Assistant Analytics",
+      "pageSubtitle": "Monitor aggregated AgroLens Assistant usage, language distribution, and Gemini API health.",
+      "privacyNote": "Only aggregated usage is shown. Farmer conversations are private.",
+      "geminiStatusLabel": "Gemini Status",
+      "online": "Online",
+      "error": "Error",
+      "kpi": {
+        "conversations": "Conversations",
+        "messages": "Messages",
+        "messagesToday": "Messages Today",
+        "activeUsersToday": "Active Users Today"
+      },
+      "charts": {
+        "messagesPerDayTitle": "Messages Per Day (30 Days)",
+        "messagesPerDaySubtitle": "Daily AI Assistant message volume across the last 30 days",
+        "messagesCount": "Messages",
+        "languageTitle": "Sinhala vs English",
+        "languageSubtitle": "Distribution of messages by language",
+        "sinhala": "Sinhala",
+        "english": "English",
+        "contextTitle": "Scan-Linked vs General Chats",
+        "contextSubtitle": "Conversations linked to a scan diagnosis vs general farming chats",
+        "scanLinked": "Scan-linked",
+        "general": "General",
+        "conversationsCount": "Conversations"
+      },
+      "errorsTable": {
+        "title": "Gemini Errors by Type",
+        "subtitle": "Logged Gemini API failures by category",
+        "typeCol": "Error Type",
+        "countCol": "Count",
+        "types": {
+          "quota": "Quota / Rate Limit",
+          "network": "Network / Timeout",
+          "config": "Config / API Key",
+          "other": "Other"
+        }
       }
     }
   },

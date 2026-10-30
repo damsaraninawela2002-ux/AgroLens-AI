@@ -10,6 +10,7 @@ from bson import ObjectId
 from fastapi import APIRouter, Body, Depends, HTTPException, Query, Request, Response, status
 from fastapi.responses import StreamingResponse
 from pymongo.errors import DuplicateKeyError
+from app.core.config import settings
 from app.core.database import get_database
 from app.core.security import (
     hash_password,
@@ -1390,15 +1391,26 @@ async def delete_diagnosis(
 # ============================================================================
 
 
+class AdminOverviewWithAIResponse(AdminAnalyticsOverviewResponse):
+    ai_messages_today: int = 0
+
+
+_SINHALA_CHAR_RE = re.compile(r"[\u0D80-\u0DFF]")
+_ASSISTANT_HEALTH_CACHE: dict[str, Any] = {
+    "data": None,
+    "checked_at": None,
+}
+
+
 @router.get(
     "/analytics/overview",
-    response_model=AdminAnalyticsOverviewResponse,
+    response_model=AdminOverviewWithAIResponse,
     status_code=status.HTTP_200_OK,
     summary="High-level system analytics overview for Admin Dashboard",
 )
 async def get_analytics_overview(
     current_user: dict = Depends(require_role("admin")),
-) -> AdminAnalyticsOverviewResponse:
+) -> AdminOverviewWithAIResponse:
     db = get_database()
 
     now = datetime.now(timezone.utc)
@@ -1431,7 +1443,20 @@ async def get_analytics_overview(
         {"is_verified": {"$ne": True}}
     )
 
-    return AdminAnalyticsOverviewResponse(
+    msg_today_agg = (
+        await db["conversations"]
+        .aggregate(
+            [
+                {"$unwind": "$messages"},
+                {"$match": {"messages.created_at": {"$gte": start_of_today}}},
+                {"$count": "count"},
+            ]
+        )
+        .to_list(length=1)
+    )
+    ai_messages_today = int(msg_today_agg[0]["count"]) if msg_today_agg else 0
+
+    return AdminOverviewWithAIResponse(
         users_by_role=UsersByRoleStats(
             farmer=farmer_count,
             officer=officer_count,
@@ -1448,6 +1473,7 @@ async def get_analytics_overview(
             total_reviewed=confirmed_count + corrected_count,
         ),
         unverified_treatments_count=unverified_treatments_count,
+        ai_messages_today=ai_messages_today,
     )
 
 
@@ -1571,6 +1597,188 @@ async def get_district_analytics(
         for doc in agg_docs
     ]
     return AdminDistrictAnalyticsResponse(items=items)
+
+
+@router.get(
+    "/analytics/assistant",
+    status_code=status.HTTP_200_OK,
+    summary="Aggregated AI Assistant usage and error analytics (never returns message content)",
+)
+async def get_assistant_analytics(
+    days: int = Query(
+        default=30, ge=1, le=365, description="Number of days to look back"
+    ),
+    current_user: dict = Depends(require_role("admin")),
+) -> dict[str, Any]:
+    db = get_database()
+    now = datetime.now(timezone.utc)
+    start_of_today = datetime(
+        year=now.year, month=now.month, day=now.day, tzinfo=timezone.utc
+    )
+    start_date = start_of_today - timedelta(days=days - 1)
+
+    conv_cursor = db["conversations"].find(
+        {},
+        {
+            "user_id": 1,
+            "diagnosis_id": 1,
+            "messages.role": 1,
+            "messages.content": 1,
+            "messages.language": 1,
+            "messages.created_at": 1,
+            "created_at": 1,
+            "updated_at": 1,
+        },
+    )
+    conv_docs = await conv_cursor.to_list(length=20000)
+
+    total_conversations = len(conv_docs)
+    scan_linked_conversations = 0
+    general_conversations = 0
+    total_messages = 0
+    messages_today = 0
+    active_users_today_set: set[str] = set()
+    sinhala_messages = 0
+    english_messages = 0
+    counts_by_day: Counter[str] = Counter()
+
+    for doc in conv_docs:
+        uid = str(doc.get("user_id") or "")
+        diag_id = doc.get("diagnosis_id")
+        if diag_id and str(diag_id).strip():
+            scan_linked_conversations += 1
+        else:
+            general_conversations += 1
+
+        msgs = doc.get("messages") or []
+        for m in msgs:
+            if not isinstance(m, dict):
+                continue
+            total_messages += 1
+
+            # Determine Sinhala vs English without exposing message text
+            lang_field = m.get("language")
+            content_str = str(m.get("content") or "")
+            if lang_field == "si" or _SINHALA_CHAR_RE.search(content_str):
+                sinhala_messages += 1
+            else:
+                english_messages += 1
+
+            msg_dt = m.get("created_at") or doc.get("created_at")
+            if isinstance(msg_dt, datetime):
+                if msg_dt.tzinfo is None:
+                    msg_dt = msg_dt.replace(tzinfo=timezone.utc)
+                if msg_dt >= start_of_today:
+                    messages_today += 1
+                    if uid:
+                        active_users_today_set.add(uid)
+                if msg_dt >= start_date:
+                    day_key = msg_dt.strftime("%Y-%m-%d")
+                    counts_by_day[day_key] += 1
+
+    messages_per_day: list[dict[str, Any]] = []
+    for offset in range(days):
+        day_dt = start_date + timedelta(days=offset)
+        day_str = day_dt.strftime("%Y-%m-%d")
+        messages_per_day.append(
+            {"date": day_str, "count": int(counts_by_day.get(day_str, 0))}
+        )
+
+    # Aggregate Gemini errors by type from chat_errors collection
+    error_pipeline = [
+        {"$group": {"_id": "$error_type", "count": {"$sum": 1}}},
+    ]
+    error_agg = await db["chat_errors"].aggregate(error_pipeline).to_list(length=50)
+    errors_by_type: dict[str, int] = {
+        "quota": 0,
+        "network": 0,
+        "config": 0,
+        "other": 0,
+    }
+    for row in error_agg:
+        err_key = str(row.get("_id") or "other").lower()
+        if err_key not in errors_by_type:
+            err_key = "other"
+        errors_by_type[err_key] += int(row.get("count", 0))
+
+    total_errors = sum(errors_by_type.values())
+
+    return {
+        "days": days,
+        "total_conversations": total_conversations,
+        "total_messages": total_messages,
+        "messages_today": messages_today,
+        "active_users_today": len(active_users_today_set),
+        "messages_per_day": messages_per_day,
+        "language_counts": {
+            "si": sinhala_messages,
+            "en": english_messages,
+            "sinhala": sinhala_messages,
+            "english": english_messages,
+        },
+        "sinhala_messages": sinhala_messages,
+        "english_messages": english_messages,
+        "conversations_by_type": {
+            "scan_linked": scan_linked_conversations,
+            "general": general_conversations,
+        },
+        "scan_linked_conversations": scan_linked_conversations,
+        "general_conversations": general_conversations,
+        "errors_by_type": errors_by_type,
+        "total_errors": total_errors,
+    }
+
+
+@router.get(
+    "/assistant/health",
+    status_code=status.HTTP_200_OK,
+    summary="Check Gemini AI Assistant health (cached for 60 seconds)",
+)
+async def get_assistant_health(
+    current_user: dict = Depends(require_role("admin")),
+) -> dict[str, Any]:
+    now = datetime.now(timezone.utc)
+    cached_data = _ASSISTANT_HEALTH_CACHE.get("data")
+    cached_at = _ASSISTANT_HEALTH_CACHE.get("checked_at")
+
+    if (
+        cached_data is not None
+        and isinstance(cached_at, datetime)
+        and (now - cached_at).total_seconds() < 60
+    ):
+        return cached_data
+
+    model_name = (
+        (getattr(settings, "GEMINI_MODEL", None) or "gemini-2.5-flash").strip()
+        or "gemini-2.5-flash"
+    )
+    api_key = (getattr(settings, "GEMINI_API_KEY", None) or "").strip()
+
+    status_val: Literal["online", "error"] = "error"
+    if api_key:
+        try:
+            from google import genai
+            from google.genai import types
+
+            client = genai.Client(api_key=api_key)
+            response = await client.aio.models.generate_content(
+                model=model_name,
+                contents="ok",
+                config=types.GenerateContentConfig(max_output_tokens=4),
+            )
+            if response is not None:
+                status_val = "online"
+        except Exception:
+            status_val = "error"
+
+    result = {
+        "status": status_val,
+        "model": model_name,
+        "checked_at": now,
+    }
+    _ASSISTANT_HEALTH_CACHE["data"] = result
+    _ASSISTANT_HEALTH_CACHE["checked_at"] = now
+    return result
 
 
 # ============================================================================

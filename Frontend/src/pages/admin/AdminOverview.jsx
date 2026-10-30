@@ -17,6 +17,7 @@ import {
 import {
   AlertTriangle,
   ArrowRight,
+  Bot,
   Calendar,
   CheckCircle2,
   Clock,
@@ -32,6 +33,7 @@ import Card from "../../components/ui/Card";
 import Button from "../../components/ui/Button";
 import Badge from "../../components/ui/Badge";
 import { useLanguage } from "../../context/LanguageContext";
+import api from "../../services/api";
 import {
   getAdminAnalyticsOverview,
   getAdminScansOverTime,
@@ -48,6 +50,7 @@ export default function AdminOverview() {
   const { lang, t } = useLanguage();
 
   const [overview, setOverview] = useState(null);
+  const [assistantHealth, setAssistantHealth] = useState(null);
   const [scansSeries, setScansSeries] = useState([]);
   const [diseaseStats, setDiseaseStats] = useState([]);
   const [districtStats, setDistrictStats] = useState([]);
@@ -58,13 +61,17 @@ export default function AdminOverview() {
     setLoading(true);
     setError("");
     try {
-      const [ov, overTime, diseases, districts] = await Promise.all([
+      const [ov, overTime, diseases, districts, healthRes] = await Promise.all([
         getAdminAnalyticsOverview(),
         getAdminScansOverTime(30),
         getAdminDiseaseAnalytics(),
         getAdminDistrictAnalytics(),
+        api
+          .get("/api/admin/assistant/health")
+          .catch(() => ({ data: { status: "error" } })),
       ]);
       setOverview(ov);
+      setAssistantHealth(healthRes?.data || { status: "error" });
       setScansSeries(Array.isArray(overTime?.series) ? overTime.series : []);
       setDiseaseStats(Array.isArray(diseases?.items) ? diseases.items : []);
       setDistrictStats(Array.isArray(districts?.items) ? districts.items : []);
@@ -82,10 +89,14 @@ export default function AdminOverview() {
       getAdminScansOverTime(30),
       getAdminDiseaseAnalytics(),
       getAdminDistrictAnalytics(),
+      api
+        .get("/api/admin/assistant/health")
+        .catch(() => ({ data: { status: "error" } })),
     ])
-      .then(([ov, overTime, diseases, districts]) => {
+      .then(([ov, overTime, diseases, districts, healthRes]) => {
         if (!active) return;
         setOverview(ov);
+        setAssistantHealth(healthRes?.data || { status: "error" });
         setScansSeries(Array.isArray(overTime?.series) ? overTime.series : []);
         setDiseaseStats(Array.isArray(diseases?.items) ? diseases.items : []);
         setDistrictStats(
@@ -137,6 +148,13 @@ export default function AdminOverview() {
       icon: Calendar,
       iconBg: "bg-emerald-50 text-[#166534] border-emerald-200/70",
       to: "/admin/diagnoses",
+    },
+    {
+      label: t("admin.overview.kpi.aiChatsToday"),
+      value: overview?.ai_messages_today ?? 0,
+      icon: Bot,
+      iconBg: "bg-emerald-50 text-[#166534] border-emerald-200/70",
+      to: "/admin/assistant",
     },
     {
       label: t("admin.overview.kpi.pendingReviews"),
@@ -199,9 +217,35 @@ export default function AdminOverview() {
         />
         <div className="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-5">
           <div className="space-y-2 max-w-2xl">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 border border-white/15 text-xs font-semibold text-[#a3e635]">
-              <Shield className="w-3.5 h-3.5" />
-              <span>{t("admin.overview.bannerBadge")}</span>
+            <div className="flex flex-wrap items-center gap-2">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 border border-white/15 text-xs font-semibold text-[#a3e635]">
+                <Shield className="w-3.5 h-3.5" />
+                <span>{t("admin.overview.bannerBadge")}</span>
+              </div>
+              {assistantHealth && (
+                <Link
+                  to="/admin/assistant"
+                  className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold border transition-opacity hover:opacity-90 ${
+                    assistantHealth.status === "online"
+                      ? "bg-emerald-500/20 text-[#a3e635] border-emerald-400/40"
+                      : "bg-red-500/25 text-red-200 border-red-400/40"
+                  }`}
+                >
+                  <span
+                    className={`w-2 h-2 rounded-full ${
+                      assistantHealth.status === "online"
+                        ? "bg-[#22c55e]"
+                        : "bg-[#ef4444]"
+                    }`}
+                  />
+                  <span>
+                    {t("admin.overview.kpi.geminiStatus")}:{" "}
+                    {assistantHealth.status === "online"
+                      ? t("admin.overview.kpi.geminiOnline")
+                      : t("admin.overview.kpi.geminiError")}
+                  </span>
+                </Link>
+              )}
             </div>
             <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight">
               {t("admin.overview.bannerTitle")}
@@ -251,8 +295,8 @@ export default function AdminOverview() {
         </Card>
       )}
 
-      {/* ================= 7 KPI STAT CARDS ================= */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-7 gap-3.5 sm:gap-4">
+      {/* ================= 8 KPI STAT CARDS ================= */}
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3.5 sm:gap-4">
         {kpiCards.map((card, idx) => {
           const Icon = card.icon;
           return (

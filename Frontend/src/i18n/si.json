@@ -318,6 +318,14 @@
   "newScan": {
     "pageTitle": "නව පත්‍ර පරීක්ෂාව",
     "pageSubtitle": "AI රෝග හඳුනාගැනීම සඳහා තක්කාලි, අර්තාපල් හෝ මාළු මිරිස් පත්‍රයක පැහැදිලි ඡායාරූපයක් උඩුගත කරන්න.",
+    "selectCropLabel": "1. බෝගය තෝරන්න (අනිවාර්යයි)",
+    "supportedCropsHint": "Supported crops: Tomato, Potato, Bell pepper. Choose the crop of the leaf you are uploading. (සහාය දක්වන බෝග: තක්කාලි, අල, මාළු මිරිස්. ඔබ උඩුගත කරන පත්‍රයේ බෝගය තෝරන්න.)",
+    "crops": {
+      "tomato": "Tomato (තක්කාලි)",
+      "potato": "Potato (අල)",
+      "pepper": "Bell Pepper (මාළු මිරිස්)"
+    },
+    "uploadStepLabel": "2. පත්‍ර ඡායාරූපය එක් කරන්න",
     "dropzoneTitle": "පත්‍ර ඡායාරූපය මෙතැනට ඇද දමන්න",
     "dropzoneSubtitle": "JPG, JPEG, හෝ PNG (උපරිම 5MB)",
     "choosePhotoBtn": "ඡායාරූපයක් තෝරන්න",
@@ -348,6 +356,7 @@
     "errors": {
       "invalidType": "වලංගු නොවන ගොනු වර්ගයකි. කරුණාකර JPG, JPEG හෝ PNG ඡායාරූපයක් තෝරන්න.",
       "tooLarge": "ඡායාරූපයේ ප්‍රමාණය 5MB ඉක්මවයි. කුඩා ඡායාරූපයක් තෝරන්න.",
+      "noCrop": "කරුණාකර පරීක්ෂා කිරීමට පෙර බෝගය තෝරන්න.",
       "noFile": "කරුණාකර පරීක්ෂා කිරීමට පෙර ඡායාරූපයක් තෝරන්න.",
       "uploadFailed": "පත්‍රය විශ්ලේෂණය කිරීමට නොහැකි විය. නැවත උත්සාහ කරන්න."
     },
@@ -357,6 +366,13 @@
     "pageTitle": "රෝග විනිශ්චය වාර්තාව",
     "backToHistory": "ඉතිහාසයට යන්න",
     "cropLabel": "බෝගය",
+    "selectedCropLabel": "තෝරාගත් බෝගය",
+    "cropWarningTitle": "බෝග ගැළපුම් අවවාදය",
+    "crops": {
+      "tomato": "Tomato (තක්කාලි)",
+      "potato": "Potato (අල)",
+      "pepper": "Bell Pepper (මාළු මිරිස්)"
+    },
     "scannedOn": "පරීක්ෂා කළ දිනය",
     "districtLabel": "දිස්ත්‍රික්කය",
     "confidenceTitle": "AI විශ්වාසනීයත්ව ලකුණු",
@@ -585,9 +601,13 @@
         "officers": "කෘෂිකර්ම නිලධාරීන්",
         "totalScans": "මුළු පත්‍ර පරීක්ෂණ",
         "scansToday": "අද දින පරීක්ෂණ",
+        "aiChatsToday": "අද AI පණිවිඩ",
         "pendingReviews": "නිලධාරී පරීක්ෂාවට ඇති",
         "pendingApprovals": "නිලධාරී අනුමැතීන්",
-        "unverifiedTreatments": "තහවුරු නොකළ ප්‍රතිකාර"
+        "unverifiedTreatments": "තහවුරු නොකළ ප්‍රතිකාර",
+        "geminiStatus": "Gemini තත්ත්වය",
+        "geminiOnline": "සක්‍රීයයි (Online)",
+        "geminiError": "දෝෂයකි (Error)"
       },
       "charts": {
         "scansOverTimeTitle": "පසුගිය දින 30 තුළ පත්‍ර පරීක්ෂණ",
@@ -918,6 +938,46 @@
       "adminsList": {
         "title": "සක්‍රීය පරිපාලක ගිණුම්",
         "you": "ඔබ"
+      }
+    },
+    "assistant": {
+      "pageTitle": "AI සහායක විශ්ලේෂණය",
+      "pageSubtitle": "AgroLens Assistant භාවිතය, භාෂා ව්‍යාප්තිය සහ Gemini API තත්ත්වය නිරීක්ෂණය කරන්න.",
+      "privacyNote": "Only aggregated usage is shown. Farmer conversations are private. (සමස්ත භාවිත දත්ත පමණක් පෙන්වයි. ගොවීන්ගේ සංවාද පෞද්ගලික වේ.)",
+      "geminiStatusLabel": "Gemini තත්ත්වය",
+      "online": "සක්‍රීයයි (Online)",
+      "error": "දෝෂයකි (Error)",
+      "kpi": {
+        "conversations": "සංවාද",
+        "messages": "මුළු පණිවිඩ",
+        "messagesToday": "අද පණිවිඩ",
+        "activeUsersToday": "අද සක්‍රීය පරිශීලකයින්"
+      },
+      "charts": {
+        "messagesPerDayTitle": "දෛනික පණිවිඩ (දින 30)",
+        "messagesPerDaySubtitle": "පසුගිය දින 30 තුළ දෛනික AI පණිවිඩ සංඛ්‍යාව",
+        "messagesCount": "පණිවිඩ",
+        "languageTitle": "සිංහල සහ ඉංග්‍රීසි භාවිතය",
+        "languageSubtitle": "භාෂාව අනුව පණිවිඩ බෙදී යාම",
+        "sinhala": "සිංහල",
+        "english": "English",
+        "contextTitle": "පරීක්ෂණ හා සබැඳි සහ සාමාන්‍ය සංවාද",
+        "contextSubtitle": "පත්‍ර රෝග විනිශ්චයන් හා සබැඳි සහ සාමාන්‍ය සංවාද",
+        "scanLinked": "පරීක්ෂණ හා සබැඳි",
+        "general": "සාමාන්‍ය",
+        "conversationsCount": "සංවාද"
+      },
+      "errorsTable": {
+        "title": "වර්ගය අනුව Gemini දෝෂ",
+        "subtitle": "වාර්තා වූ Gemini API දෝෂ සංඛ්‍යාව",
+        "typeCol": "දෝෂ වර්ගය",
+        "countCol": "ගණන",
+        "types": {
+          "quota": "සීමාව ඉක්මවීම (Quota)",
+          "network": "ජාල දෝෂ (Network)",
+          "config": "සැකසුම් දෝෂ (Config)",
+          "other": "වෙනත් (Other)"
+        }
       }
     }
   },

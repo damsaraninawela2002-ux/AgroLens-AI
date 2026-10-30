@@ -77,8 +77,10 @@ def make_gradcam_heatmap(
             preds = x
 
         if pred_index is None:
-            pred_index = int(tf.argmax(preds[0]))
-        class_channel = preds[:, pred_index]
+            chosen_index = int(tf.argmax(preds[0]))
+        else:
+            chosen_index = int(pred_index)
+        class_channel = preds[:, chosen_index]
 
     grads = tape.gradient(class_channel, last_conv_layer_output)
     pooled_grads = tf.reduce_mean(grads, axis=(0, 1, 2))

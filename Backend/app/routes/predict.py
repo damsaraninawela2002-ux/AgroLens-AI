@@ -2,9 +2,9 @@ import io
 import uuid
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Any
+from typing import Any, Optional
 from bson import ObjectId
-from fastapi import APIRouter, Depends, File, HTTPException, UploadFile, status
+from fastapi import APIRouter, Depends, File, Form, HTTPException, UploadFile, status
 from PIL import Image, UnidentifiedImageError
 from app.core.database import get_database
 from app.core.security import require_role
@@ -41,6 +41,9 @@ def serialize_diagnosis(doc: dict[str, Any]) -> dict[str, Any]:
         "district": doc["district"],
         "image_url": doc["image_url"],
         "heatmap_url": doc["heatmap_url"],
+        "crop": doc.get("crop"),
+        "crop_match_score": doc.get("crop_match_score"),
+        "warning": doc.get("warning"),
         "predicted_class": doc["predicted_class"],
         "confidence": doc["confidence"],
         "top3": doc["top3"],
@@ -91,8 +94,21 @@ def serialize_treatment(doc: dict[str, Any] | None) -> dict[str, Any] | None:
 )
 async def predict_disease(
     file: UploadFile = File(..., description="Leaf photo (JPG, JPEG, or PNG up to 5MB)"),
+    crop: Optional[str] = Form(
+        default=None,
+        description='Optional crop filter: "tomato" | "potato" | "pepper"',
+    ),
     current_user: dict = Depends(require_role("farmer")),
 ) -> dict[str, Any]:
+    normalized_crop: Optional[str] = None
+    if crop is not None and crop.strip():
+        normalized_crop = crop.strip().lower()
+        if normalized_crop not in ("tomato", "potato", "pepper"):
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Invalid crop. Allowed values are: tomato, potato, pepper.",
+            )
+
     # 1. Validate filename extension and content type
     original_filename = file.filename or ""
     ext = Path(original_filename).suffix.lower()
@@ -143,18 +159,30 @@ async def predict_disease(
     image_path.write_bytes(image_bytes)
 
     # 5. Run model prediction and Grad-CAM generation
-    prediction = predict(image_bytes)
+    prediction = predict(image_bytes, crop=normalized_crop)
     model = get_model()
     heatmap_filename = generate_and_save_gradcam(
         image_bytes=image_bytes,
         model=model,
         heatmaps_dir=HEATMAPS_DIR,
         last_conv_layer_name="Conv_1",
-        pred_index=prediction["predicted_index"],
+        pred_index=int(prediction["predicted_index"]),
     )
 
     confidence = prediction["confidence"]
-    diagnosis_status = "pending_review" if confidence < 70.0 else "auto"
+    crop_match_score = prediction.get("crop_match_score")
+    warning: Optional[str] = None
+
+    if normalized_crop is not None and crop_match_score is not None:
+        diagnosis_status = (
+            "pending_review"
+            if (confidence < 70.0 or crop_match_score < 50.0)
+            else "auto"
+        )
+        if crop_match_score < 30.0:
+            warning = f"This photo may not be a {normalized_crop} leaf"
+    else:
+        diagnosis_status = "pending_review" if confidence < 70.0 else "auto"
 
     # 6. Save diagnosis document in MongoDB "diagnoses" collection
     db = get_database()
@@ -163,6 +191,9 @@ async def predict_disease(
         "district": current_user["district"],
         "image_url": f"/uploads/images/{image_filename}",
         "heatmap_url": f"/uploads/heatmaps/{heatmap_filename}",
+        "crop": normalized_crop,
+        "crop_match_score": crop_match_score,
+        "warning": warning,
         "predicted_class": prediction["predicted_class"],
         "confidence": confidence,
         "top3": prediction["top3"],
@@ -186,6 +217,8 @@ async def predict_disease(
     return {
         "diagnosis": serialize_diagnosis(diagnosis_doc),
         "treatment": serialize_treatment(treatment_doc),
+        "crop_match_score": crop_match_score,
+        "warning": warning,
         "disclaimer": DISCLAIMER_TEXT,
     }
 

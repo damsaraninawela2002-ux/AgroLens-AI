@@ -6,6 +6,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from pydantic import BaseModel, Field, field_validator
 from app.core.database import get_database
 from app.core.security import get_current_user
+from app.services import gemini_service
 from app.services.gemini_service import generate_reply
 
 router = APIRouter(prefix="/api/chat", tags=["AI Assistant"])
@@ -112,6 +113,127 @@ async def _build_diagnosis_context(
     }
 
 
+def _classify_gemini_exception(
+    exc: Exception,
+) -> Literal["quota", "network", "config", "other"]:
+    msg = f"{type(exc).__name__} {str(exc)}".lower()
+    if any(
+        k in msg
+        for k in (
+            "api_key",
+            "apikey",
+            "api key",
+            "unauthenticated",
+            "permission_denied",
+            "permission denied",
+            "invalid_argument",
+            "not configured",
+            "missing key",
+        )
+    ):
+        return "config"
+    if any(
+        k in msg
+        for k in (
+            "429",
+            "quota",
+            "resource_exhausted",
+            "rate limit",
+            "ratelimit",
+            "too many requests",
+        )
+    ):
+        return "quota"
+    if any(
+        k in msg
+        for k in (
+            "timeout",
+            "timed out",
+            "connect",
+            "network",
+            "dns",
+            "unreachable",
+            "socket",
+            "connection",
+            "502",
+            "503",
+            "504",
+        )
+    ):
+        return "network"
+    return "other"
+
+
+def _detect_fallback_error_type(
+    reply_text: str,
+) -> Optional[Literal["quota", "network", "config", "other"]]:
+    if not reply_text:
+        return "other"
+
+    # Check fallback message tables defined in gemini_service
+    for attr_val in vars(gemini_service).values():
+        if isinstance(attr_val, dict):
+            for key, val in attr_val.items():
+                matched = False
+                if isinstance(val, str) and reply_text.strip() == val.strip():
+                    matched = True
+                elif isinstance(val, dict) and reply_text.strip() in {
+                    str(v).strip() for v in val.values() if isinstance(v, str)
+                }:
+                    matched = True
+                if matched:
+                    k_low = str(key).lower()
+                    if "key" in k_low or "config" in k_low:
+                        return "config"
+                    if "quota" in k_low or "rate" in k_low or "limit" in k_low:
+                        return "quota"
+                    if "net" in k_low or "conn" in k_low or "timeout" in k_low:
+                        return "network"
+                    return "other"
+
+    low = reply_text.lower()
+    if (
+        "is not configured" in low
+        or "missing api key" in low
+        or "සකසා නොමැත" in reply_text
+    ):
+        return "config"
+    if (
+        "experiencing high demand" in low
+        or "quota" in low
+        or "කාර්යබහුල බැවින්" in reply_text
+    ):
+        return "quota"
+    if (
+        "unable to connect to agrolens assistant" in low
+        or "check your internet connection" in low
+        or "සම්බන්ධ වීමට නොහැක" in reply_text
+    ):
+        return "network"
+    if (
+        "is temporarily unavailable" in low
+        or "තාවකාලිකව ලබා ගත නොහැක" in reply_text
+    ):
+        return "other"
+
+    return None
+
+
+async def _log_chat_error(
+    db: Any,
+    user_id: str,
+    error_type: Literal["quota", "network", "config", "other"],
+) -> None:
+    """Save a Gemini failure record in chat_errors without storing message text or API key."""
+    await db["chat_errors"].insert_one(
+        {
+            "user_id": str(user_id),
+            "error_type": error_type,
+            "created_at": datetime.now(timezone.utc),
+        }
+    )
+
+
 def _serialize_conversation_summary(doc: dict[str, Any]) -> dict[str, Any]:
     return {
         "id": str(doc["_id"]),
@@ -189,12 +311,24 @@ async def send_chat_message(
     history = (conv_doc.get("messages") or []) if conv_doc else []
     now = datetime.now(timezone.utc)
 
-    reply_text = await generate_reply(
-        message=payload.message,
-        history=history,
-        diagnosis_context=diagnosis_context,
-        language=payload.language,
-    )
+    try:
+        reply_text = await generate_reply(
+            message=payload.message,
+            history=history,
+            diagnosis_context=diagnosis_context,
+            language=payload.language,
+        )
+        detected_error = _detect_fallback_error_type(reply_text)
+        if detected_error is not None:
+            await _log_chat_error(db, user_id, detected_error)
+    except Exception as exc:
+        err_type = _classify_gemini_exception(exc)
+        await _log_chat_error(db, user_id, err_type)
+        reply_text = (
+            "AgroLens Assistant දැනට තාවකාලිකව ලබා ගත නොහැක. කරුණාකර මද වේලාවකින් නැවත උත්සාහ කරන්න."
+            if payload.language == "si"
+            else "AgroLens Assistant is temporarily unavailable. Please try again in a moment."
+        )
 
     reply_time = datetime.now(timezone.utc)
     user_msg = {
