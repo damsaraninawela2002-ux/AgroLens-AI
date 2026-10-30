@@ -442,6 +442,12 @@ This is an educational prototype. It is not a replacement for professional agric
 
 ---
 
+
+## 📄 License
+
+This project is developed for educational purposes and released under the [MIT License](LICENSE).
+
+
 ## 👩‍💻 Author
 
 **Damsarini Nawela**
@@ -452,6 +458,8 @@ HNDIT student, Advanced Technological Institute – Rathnapura
 [![Portfolio](https://img.shields.io/badge/Portfolio-16A34A?style=flat&logo=vercel&logoColor=white)](https://frontend-1-henna.vercel.app/)
 
 ---
+\
+
 
 ## ⚠️ Disclaimer
 
