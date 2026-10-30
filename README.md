@@ -112,13 +112,13 @@ A farmer is unlikely to act on a label alone. Showing **where** on the leaf the 
 ## 📸 Screenshots
 
 ### Farmer Dashboard
-![Farmer Dashboard](docs/screenshots/3.jpeg)
+![Farmer Dashboard](docs/screenshots/2.jpeg)
 
 ### AI Assistant (Sinhala)
-![AI Assistant](docs/screenshots/2.jpeg)
+![AI Assistant](docs/screenshots/1.jpeg)
 
 ### New Scan – Crop Selection
-![New Scan](docs/screenshots/1.jpeg)
+![New Scan](docs/screenshots/3.jpeg)
 
 ---
 
