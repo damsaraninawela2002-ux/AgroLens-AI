@@ -88,7 +88,7 @@ A farmer is unlikely to act on a label alone. Showing **where** on the leaf the 
 - **Agricultural Officers** who need to verify uncertain AI diagnoses
 - **Administrators** who manage users and verified treatment information
 - **Learners** studying computer vision, explainable AI and full-stack ML deployment
-- **Recruiters and reviewers** looking for an end-to-end deep learning and web engineering portfolio project
+
 
 ---
 
