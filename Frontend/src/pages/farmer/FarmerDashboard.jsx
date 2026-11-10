@@ -14,18 +14,19 @@ import {
 import {
   AlertTriangle,
   ArrowRight,
+  BarChart3,
   Camera,
   CheckCircle2,
   Clock,
+  History,
   MapPin,
   RefreshCw,
-  ScanLine,
-  ShieldAlert,
   Sprout,
 } from "lucide-react";
 import Card from "../../components/ui/Card";
 import Button from "../../components/ui/Button";
 import Badge from "../../components/ui/Badge";
+import FadeIn from "../../components/common/FadeIn";
 import { useAuth } from "../../context/AuthContext";
 import { useLanguage } from "../../context/LanguageContext";
 import { getFarmerHistory } from "../../services/predictService";
@@ -130,11 +131,12 @@ export default function FarmerDashboard() {
       .slice(0, 6);
   }, [scans, lang]);
 
-  const statusBadgeVariant = (status) => {
-    if (status === "pending_review") return "warning";
-    if (status === "confirmed" || status === "auto") return "success";
-    if (status === "corrected") return "info";
-    return "neutral";
+  const statusBadgeProps = (status) => {
+    if (status === "pending_review") return { variant: "warning", icon: Clock };
+    if (status === "confirmed" || status === "auto")
+      return { variant: "success", icon: CheckCircle2 };
+    if (status === "corrected") return { variant: "info", icon: CheckCircle2 };
+    return { variant: "neutral", icon: null };
   };
 
   return (
@@ -169,13 +171,13 @@ export default function FarmerDashboard() {
             </p>
           </div>
 
-          <div className="shrink-0">
-            <Link to="/farmer/scan">
+          <div className="w-full sm:w-auto shrink-0">
+            <Link to="/farmer/scan" className="block w-full sm:w-auto">
               <Button
                 variant="accent"
                 size="lg"
                 icon={Camera}
-                className="w-full sm:w-auto text-base px-7 py-4 shadow-lg"
+                className="w-full sm:w-auto text-base px-7 py-3.5 shadow-lg"
               >
                 {t("dashboard.scanCtaButton")}
               </Button>
@@ -186,9 +188,9 @@ export default function FarmerDashboard() {
 
       {/* ================= ERROR STATE WITH RETRY ================= */}
       {error && (
-        <Card className="border-red-200 bg-red-50/60 flex flex-col sm:flex-row items-center justify-between gap-4">
+        <Card className="border-red-200 bg-red-50/60 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4">
           <div className="flex items-center gap-3 text-[#dc2626]">
-            <AlertTriangle className="w-5 h-5 shrink-0" />
+            <AlertTriangle className="w-6 h-6 shrink-0" />
             <div>
               <p className="text-sm font-bold">{t("dashboard.error.title")}</p>
               <p className="text-xs text-red-700">{error}</p>
@@ -199,6 +201,7 @@ export default function FarmerDashboard() {
             size="sm"
             icon={RefreshCw}
             onClick={loadHistory}
+            className="w-full sm:w-auto"
           >
             {t("dashboard.error.retryBtn")}
           </Button>
@@ -206,12 +209,12 @@ export default function FarmerDashboard() {
       )}
 
       {/* ================= 4 STAT CARDS ================= */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
         {[
           {
             label: t("dashboard.stats.totalScans"),
             value: stats.total,
-            icon: ScanLine,
+            icon: Camera,
             iconBg: "bg-emerald-50 text-[#166534] border-emerald-200/70",
           },
           {
@@ -223,7 +226,7 @@ export default function FarmerDashboard() {
           {
             label: t("dashboard.stats.diseasesDetected"),
             value: stats.diseased,
-            icon: ShieldAlert,
+            icon: AlertTriangle,
             iconBg: "bg-red-50 text-[#dc2626] border-red-200/70",
           },
           {
@@ -235,25 +238,27 @@ export default function FarmerDashboard() {
         ].map((card, idx) => {
           const Icon = card.icon;
           return (
-            <Card key={idx} padding="p-4 sm:p-5">
-              <div className="flex items-center justify-between gap-2">
-                <span className="text-xs font-bold uppercase tracking-wider text-slate-500">
-                  {card.label}
-                </span>
-                <div
-                  className={`w-10 h-10 rounded-xl border flex items-center justify-center shrink-0 ${card.iconBg}`}
-                >
-                  <Icon className="w-5 h-5" />
+            <FadeIn key={idx} delay={idx * 80} className="h-full">
+              <Card padding="p-4 sm:p-5" className="h-full">
+                <div className="flex items-center justify-between gap-2">
+                  <span className="text-xs font-bold uppercase tracking-wider text-slate-500">
+                    {card.label}
+                  </span>
+                  <div
+                    className={`w-11 h-11 rounded-xl border flex items-center justify-center shrink-0 ${card.iconBg}`}
+                  >
+                    <Icon className="w-6 h-6" />
+                  </div>
                 </div>
-              </div>
-              {loading ? (
-                <div className="mt-3 h-8 w-16 rounded-lg bg-slate-200 animate-pulse" />
-              ) : (
-                <p className="mt-3 text-2xl sm:text-3xl font-extrabold text-slate-900">
-                  {card.value}
-                </p>
-              )}
-            </Card>
+                {loading ? (
+                  <div className="mt-3 h-8 w-16 rounded-lg bg-slate-200 animate-pulse" />
+                ) : (
+                  <p className="mt-3 text-2xl sm:text-3xl font-extrabold text-slate-900">
+                    {card.value}
+                  </p>
+                )}
+              </Card>
+            </FadeIn>
           );
         })}
       </div>
@@ -285,116 +290,129 @@ export default function FarmerDashboard() {
 
       {/* ================= EMPTY STATE (WHEN NO SCANS YET) ================= */}
       {!loading && !error && scans.length === 0 && (
-        <Card className="py-14 px-6 text-center max-w-xl mx-auto space-y-5">
-          <div className="w-20 h-20 mx-auto rounded-3xl bg-gradient-to-br from-emerald-50 to-lime-100 border border-emerald-200/80 flex items-center justify-center text-[#166534] shadow-inner">
-            <Sprout className="w-10 h-10" />
-          </div>
-          <div className="space-y-2">
-            <h3 className="text-xl font-extrabold text-slate-900">
-              {t("dashboard.empty.title")}
-            </h3>
-            <p className="text-sm text-slate-600 max-w-md mx-auto leading-relaxed">
-              {t("dashboard.empty.subtitle")}
-            </p>
-          </div>
-          <div>
-            <Link to="/farmer/scan">
-              <Button variant="primary" size="lg" icon={Camera}>
-                {t("dashboard.empty.actionBtn")}
-              </Button>
-            </Link>
-          </div>
-        </Card>
+        <FadeIn>
+          <Card className="py-14 px-6 text-center max-w-xl mx-auto space-y-5">
+            <div className="w-20 h-20 mx-auto rounded-3xl bg-gradient-to-br from-emerald-50 to-lime-100 border border-emerald-200/80 flex items-center justify-center text-[#166534] shadow-inner">
+              <Sprout className="w-10 h-10" />
+            </div>
+            <div className="space-y-2">
+              <h3 className="text-xl font-extrabold text-slate-900">
+                {t("dashboard.empty.title")}
+              </h3>
+              <p className="text-sm text-slate-600 max-w-md mx-auto leading-relaxed">
+                {t("dashboard.empty.subtitle")}
+              </p>
+            </div>
+            <div>
+              <Link to="/farmer/scan" className="block w-full sm:inline-block sm:w-auto">
+                <Button variant="primary" size="lg" icon={Camera} className="w-full sm:w-auto">
+                  {t("dashboard.empty.actionBtn")}
+                </Button>
+              </Link>
+            </div>
+          </Card>
+        </FadeIn>
       )}
 
       {/* ================= RECENT SCANS + RECHARTS BAR CHART ================= */}
       {!loading && scans.length > 0 && (
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
           {/* Left: Recent 5 Scans List */}
-          <Card className="lg:col-span-7 space-y-4">
-            <div className="flex items-center justify-between gap-2 pb-2 border-b border-slate-100">
-              <div>
-                <h3 className="text-lg font-extrabold text-slate-900">
-                  {t("dashboard.recentScans.title")}
-                </h3>
-                <p className="text-xs text-slate-500">
-                  {t("dashboard.recentScans.subtitle")}
-                </p>
+          <FadeIn className="lg:col-span-7">
+            <Card className="space-y-4">
+              <div className="flex flex-wrap items-center justify-between gap-2 pb-2 border-b border-slate-100">
+                <div className="flex items-center gap-2.5">
+                  <History className="w-6 h-6 text-[#166534] shrink-0" />
+                  <div>
+                    <h3 className="text-lg font-extrabold text-slate-900">
+                      {t("dashboard.recentScans.title")}
+                    </h3>
+                    <p className="text-xs text-slate-500">
+                      {t("dashboard.recentScans.subtitle")}
+                    </p>
+                  </div>
+                </div>
+                <Link
+                  to="/farmer/history"
+                  className="btn-interactive inline-flex items-center gap-1.5 min-h-[48px] px-3 py-2 rounded-xl text-xs font-bold text-[#166534] hover:bg-emerald-50 hover:text-[#15803d]"
+                >
+                  <span>{t("dashboard.recentScans.viewAll")}</span>
+                  <ArrowRight className="w-4 h-4 shrink-0" />
+                </Link>
               </div>
-              <Link
-                to="/farmer/history"
-                className="inline-flex items-center gap-1 text-xs font-bold text-[#166534] hover:text-[#15803d]"
-              >
-                <span>{t("dashboard.recentScans.viewAll")}</span>
-                <ArrowRight className="w-3.5 h-3.5" />
-              </Link>
-            </div>
 
-            <div className="divide-y divide-slate-100">
-              {recentScans.map((scan) => {
-                const effectiveClass =
-                  scan.officer_label || scan.predicted_class;
-                const isCorrected =
-                  scan.status === "corrected" &&
-                  scan.officer_label &&
-                  scan.officer_label !== scan.predicted_class;
-                const tone = getConfidenceTone(scan.confidence);
-                return (
-                  <Link
-                    key={scan.id}
-                    to={`/farmer/scan/${scan.id}`}
-                    className="py-3.5 first:pt-1 last:pb-1 flex items-center justify-between gap-3.5 group hover:bg-slate-50/80 -mx-2 px-2 rounded-xl transition-colors"
-                  >
-                    <div className="flex items-center gap-3.5 min-w-0">
-                      <img
-                        src={getImageUrl(scan.image_url)}
-                        alt={formatDiseaseKey(effectiveClass, lang)}
-                        className="w-14 h-14 rounded-xl object-cover border border-slate-200 shrink-0 bg-slate-100"
-                      />
-                      <div className="min-w-0 space-y-1">
-                        {isCorrected && (
-                          <p className="text-[11px] font-semibold text-slate-400 line-through truncate">
-                            {formatDiseaseKey(scan.predicted_class, lang)}
-                          </p>
-                        )}
-                        <p className="text-sm font-bold text-slate-900 group-hover:text-[#166534] truncate">
-                          {formatDiseaseKey(effectiveClass, lang)}
-                        </p>
-                        <div className="flex flex-wrap items-center gap-2 text-xs text-slate-500">
-                          <span className={`font-bold ${tone.textClass}`}>
-                            {formatConfidence(scan.confidence, 1)}
-                          </span>
-                          <span>•</span>
-                          <span>{formatDate(scan.created_at, lang)}</span>
+              <div className="divide-y divide-slate-100">
+                {recentScans.map((scan, sIdx) => {
+                  const effectiveClass =
+                    scan.officer_label || scan.predicted_class;
+                  const isCorrected =
+                    scan.status === "corrected" &&
+                    scan.officer_label &&
+                    scan.officer_label !== scan.predicted_class;
+                  const tone = getConfidenceTone(scan.confidence);
+                  const badge = statusBadgeProps(scan.status);
+                  return (
+                    <FadeIn key={scan.id} delay={sIdx * 80}>
+                      <Link
+                        to={`/farmer/scan/${scan.id}`}
+                        className="py-3.5 first:pt-1 last:pb-1 flex flex-col sm:flex-row sm:items-center justify-between gap-3 group hover:bg-slate-50/80 -mx-2 px-2 rounded-xl transition-colors"
+                      >
+                        <div className="flex items-center gap-3.5 min-w-0">
+                          <img
+                            src={getImageUrl(scan.image_url)}
+                            alt={formatDiseaseKey(effectiveClass, lang)}
+                            className="w-14 h-14 rounded-xl object-cover border border-slate-200 shrink-0 bg-slate-100"
+                          />
+                          <div className="min-w-0 space-y-1">
+                            {isCorrected && (
+                              <p className="text-[11px] font-semibold text-slate-400 line-through truncate">
+                                {formatDiseaseKey(scan.predicted_class, lang)}
+                              </p>
+                            )}
+                            <p className="text-sm font-bold text-slate-900 group-hover:text-[#166534] break-words">
+                              {formatDiseaseKey(effectiveClass, lang)}
+                            </p>
+                            <div className="flex flex-wrap items-center gap-2 text-xs text-slate-500">
+                              <span className={`font-bold ${tone.textClass}`}>
+                                {formatConfidence(scan.confidence, 1)}
+                              </span>
+                              <span>•</span>
+                              <span>{formatDate(scan.created_at, lang)}</span>
+                            </div>
+                          </div>
                         </div>
-                      </div>
-                    </div>
 
-                    <div className="flex items-center gap-2 shrink-0">
-                      <Badge variant={statusBadgeVariant(scan.status)}>
-                        {scan.status === "confirmed" && (
-                          <CheckCircle2 className="w-3.5 h-3.5 text-[#166534]" />
-                        )}
-                        <span>{t(`status.${scan.status}`, scan.status)}</span>
-                      </Badge>
-                      <ArrowRight className="w-4 h-4 text-slate-400 group-hover:text-[#166534] group-hover:translate-x-0.5 transition-transform hidden sm:block" />
-                    </div>
-                  </Link>
-                );
-              })}
-            </div>
-          </Card>
+                        <div className="flex items-center justify-between sm:justify-end gap-2 shrink-0 pl-17 sm:pl-0">
+                          <Badge variant={badge.variant} icon={badge.icon}>
+                            {t(
+                              `farmerStatus.${scan.status}`,
+                              t(`status.${scan.status}`, scan.status)
+                            )}
+                          </Badge>
+                          <ArrowRight className="w-4 h-4 text-slate-400 group-hover:text-[#166534] group-hover:translate-x-0.5 transition-transform hidden sm:block" />
+                        </div>
+                      </Link>
+                    </FadeIn>
+                  );
+                })}
+              </div>
+            </Card>
+          </FadeIn>
 
           {/* Right: Recharts Bar Chart (Scans by Disease) */}
-          <Card className="lg:col-span-5 space-y-4">
-            <div className="pb-2 border-b border-slate-100">
-              <h3 className="text-lg font-extrabold text-slate-900">
-                {t("dashboard.chart.title")}
-              </h3>
-              <p className="text-xs text-slate-500">
-                {t("dashboard.chart.subtitle")}
-              </p>
-            </div>
+          <FadeIn delay={120} className="lg:col-span-5">
+            <Card className="space-y-4">
+              <div className="flex items-center gap-2.5 pb-2 border-b border-slate-100">
+                <BarChart3 className="w-6 h-6 text-[#166534] shrink-0" />
+                <div>
+                  <h3 className="text-lg font-extrabold text-slate-900">
+                    {t("dashboard.chart.title")}
+                  </h3>
+                  <p className="text-xs text-slate-500">
+                    {t("dashboard.chart.subtitle")}
+                  </p>
+                </div>
+              </div>
 
             <div className="h-64 w-full pt-2">
               <ResponsiveContainer width="100%" height="100%">
@@ -453,7 +471,8 @@ export default function FarmerDashboard() {
                 <span>{t("status.healthy")}</span>
               </span>
             </div>
-          </Card>
+            </Card>
+          </FadeIn>
         </div>
       )}
     </div>

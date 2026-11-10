@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { NavLink, Outlet, useLocation, useNavigate } from "react-router-dom";
 import {
   Activity,
-  Bot,
   Camera,
   CheckCircle2,
   ClipboardList,
@@ -13,6 +12,7 @@ import {
   LogOut,
   MapPin,
   MapPinned,
+  MessageCircle,
   ScanLine,
   Shield,
   Stethoscope,
@@ -152,7 +152,7 @@ export default function DashboardLayout() {
     {
       to: "/farmer/assistant",
       label: t("sidebar.aiAssistant"),
-      icon: Bot,
+      icon: MessageCircle,
       disabled: false,
     },
     {
@@ -185,7 +185,7 @@ export default function DashboardLayout() {
     {
       to: "/officer/assistant",
       label: t("sidebar.aiAssistant"),
-      icon: Bot,
+      icon: MessageCircle,
       disabled: false,
     },
     {
@@ -247,7 +247,7 @@ export default function DashboardLayout() {
     {
       to: "/admin/assistant",
       label: t("sidebar.aiAssistant"),
-      icon: Bot,
+      icon: MessageCircle,
       disabled: false,
     },
     {
@@ -291,7 +291,7 @@ export default function DashboardLayout() {
       : t("sidebar.farmerPortal");
 
   return (
-    <div className="min-h-screen flex bg-[#f8faf5] text-slate-900">
+    <div className="min-h-screen flex bg-[#f8faf5] text-slate-900 overflow-x-hidden">
       {/* ================= DESKTOP LEFT SIDEBAR ================= */}
       {hasSidebar && (
         <aside className="no-print hidden lg:flex lg:flex-col lg:w-68 lg:fixed lg:inset-y-0 bg-white border-r border-slate-200/80 z-40">
@@ -317,11 +317,11 @@ export default function DashboardLayout() {
                   <div
                     key={item.label}
                     title={`${item.label} (${item.badge})`}
-                    className="flex items-center justify-between px-3.5 py-3 rounded-xl text-sm font-semibold text-slate-400 bg-slate-50/60 cursor-not-allowed select-none"
+                    className="flex items-center justify-between min-h-[48px] px-3.5 py-2.5 rounded-xl text-sm font-semibold leading-[1.7] text-slate-400 bg-slate-50/60 cursor-not-allowed select-none"
                   >
                     <span className="flex items-center gap-3">
-                      <Icon className="w-5 h-5 text-slate-400" />
-                      <span>{item.label}</span>
+                      <Icon className="w-5 h-5 text-slate-400 shrink-0" />
+                      <span className="whitespace-normal break-words">{item.label}</span>
                     </span>
                     <span className="px-2 py-0.5 text-[10px] font-bold rounded-full bg-amber-100 text-amber-800">
                       {item.badge}
@@ -336,7 +336,7 @@ export default function DashboardLayout() {
                   to={item.to}
                   end={item.to === homePath}
                   className={({ isActive }) =>
-                    `flex items-center justify-between gap-2 px-3.5 py-3 rounded-xl text-sm font-semibold transition-all ${
+                    `btn-interactive flex items-center justify-between gap-2 min-h-[48px] px-3.5 py-2.5 rounded-xl text-sm font-semibold leading-[1.7] transition-all ${
                       isActive
                         ? "bg-[#166534] text-white shadow-sm shadow-[#166534]/20"
                         : "text-slate-600 hover:bg-emerald-50/70 hover:text-[#166534]"
@@ -347,7 +347,7 @@ export default function DashboardLayout() {
                     <>
                       <span className="flex items-center gap-3 min-w-0">
                         <Icon className="w-5 h-5 shrink-0" />
-                        <span className="truncate">{item.label}</span>
+                        <span className="whitespace-normal break-words">{item.label}</span>
                       </span>
                       {item.countBadge > 0 && (
                         <span
@@ -437,10 +437,10 @@ export default function DashboardLayout() {
             <button
               type="button"
               onClick={toggleLanguage}
-              className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold bg-[#f8faf5] hover:bg-emerald-50 text-slate-700 hover:text-[#166534] border border-slate-200 transition-colors cursor-pointer"
+              className="btn-interactive inline-flex items-center gap-2 min-h-[48px] px-3.5 py-2.5 rounded-xl text-xs font-bold leading-[1.7] bg-[#f8faf5] hover:bg-emerald-50 text-slate-700 hover:text-[#166534] border border-slate-200 transition-colors cursor-pointer"
               aria-label="Toggle language between Sinhala and English"
             >
-              <Globe className="w-3.5 h-3.5 text-[#15803d]" />
+              <Globe className="w-5 h-5 text-[#15803d] shrink-0" />
               <span>{lang === "en" ? "සිංහල" : "English"}</span>
             </button>
 
@@ -472,7 +472,7 @@ export default function DashboardLayout() {
         </header>
 
         {/* Page Body */}
-        <main className="flex-1 w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 pb-24 lg:pb-10">
+        <main className="flex-1 w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 pb-24 sm:pb-8">
           <ErrorBoundary key={location.pathname}>
             <Outlet />
           </ErrorBoundary>
@@ -483,7 +483,8 @@ export default function DashboardLayout() {
       {hasSidebar && (
         <nav
           aria-label="Mobile Bottom Navigation"
-          className="no-print lg:hidden fixed bottom-0 inset-x-0 z-40 bg-white/95 backdrop-blur-md border-t border-slate-200 px-2 py-1.5 shadow-lg overflow-x-auto"
+          style={{ paddingBottom: "max(0.375rem, env(safe-area-inset-bottom))" }}
+          className="no-print lg:hidden fixed bottom-0 inset-x-0 z-40 bg-white/95 backdrop-blur-md border-t border-slate-200 px-2 pt-1.5 shadow-lg overflow-x-auto"
         >
           <div className="flex items-center justify-around gap-1 min-w-max mx-auto">
             {mobileNavItems.map((item) => {
@@ -494,14 +495,14 @@ export default function DashboardLayout() {
                   to={item.to}
                   end={item.to === homePath}
                   className={({ isActive }) =>
-                    `relative flex flex-col items-center justify-center py-1.5 px-3 rounded-xl text-[11px] font-bold transition-colors ${
+                    `btn-interactive relative flex flex-col items-center justify-center min-h-[48px] py-1.5 px-3 rounded-xl text-[11px] font-bold transition-colors ${
                       isActive
                         ? "text-[#166534] bg-emerald-50"
                         : "text-slate-500 hover:text-slate-800"
                     }`
                   }
                 >
-                  <Icon className="w-5 h-5 mb-0.5" />
+                  <Icon className="w-5 h-5 mb-0.5 shrink-0" />
                   <span className="truncate max-w-[78px]">{item.label}</span>
                   {item.countBadge > 0 && (
                     <span className="absolute top-1 right-1.5 w-2 h-2 rounded-full bg-amber-500" />

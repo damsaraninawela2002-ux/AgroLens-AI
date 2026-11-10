@@ -14,6 +14,7 @@ import {
 import Card from "../../components/ui/Card";
 import Button from "../../components/ui/Button";
 import Badge from "../../components/ui/Badge";
+import FadeIn from "../../components/common/FadeIn";
 import { useLanguage } from "../../context/LanguageContext";
 import { getFarmerHistory } from "../../services/predictService";
 import {
@@ -102,7 +103,7 @@ export default function ScanHistory() {
     if (status === "pending_review") return { variant: "warning", icon: Clock };
     if (status === "confirmed") return { variant: "success", icon: CheckCircle2 };
     if (status === "corrected") return { variant: "info", icon: ShieldCheck };
-    if (status === "auto") return { variant: "success", icon: ShieldCheck };
+    if (status === "auto") return { variant: "success", icon: CheckCircle2 };
     return { variant: "neutral", icon: null };
   };
 
@@ -119,50 +120,52 @@ export default function ScanHistory() {
           </p>
         </div>
 
-        <Link to="/farmer/scan">
-          <Button variant="primary" icon={Camera}>
+        <Link to="/farmer/scan" className="w-full sm:w-auto">
+          <Button variant="primary" icon={Camera} className="w-full sm:w-auto">
             {t("history.newScanBtn")}
           </Button>
         </Link>
       </div>
 
       {/* Filters & Search Bar */}
-      <Card padding="p-4 sm:p-5" className="space-y-4">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-          {/* Status Pills */}
-          <div className="flex items-center gap-1.5 overflow-x-auto pb-1 md:pb-0">
-            {filterTabs.map((tab) => {
-              const active = statusFilter === tab.id;
-              return (
-                <button
-                  key={tab.id}
-                  type="button"
-                  onClick={() => setStatusFilter(tab.id)}
-                  className={`px-3.5 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition-all cursor-pointer ${
-                    active
-                      ? "bg-[#166534] text-white shadow-xs"
-                      : "bg-slate-100 text-slate-600 hover:bg-slate-200/70"
-                  }`}
-                >
-                  {tab.label}
-                </button>
-              );
-            })}
-          </div>
+      <FadeIn>
+        <Card padding="p-4 sm:p-5" className="space-y-4">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+            {/* Status Pills */}
+            <div className="flex flex-wrap items-center gap-2">
+              {filterTabs.map((tab) => {
+                const active = statusFilter === tab.id;
+                return (
+                  <button
+                    key={tab.id}
+                    type="button"
+                    onClick={() => setStatusFilter(tab.id)}
+                    className={`btn-interactive min-h-[48px] h-auto px-3.5 py-2.5 rounded-xl text-xs font-bold leading-[1.7] whitespace-normal break-words transition-all cursor-pointer ${
+                      active
+                        ? "bg-[#166534] text-white shadow-xs"
+                        : "bg-slate-100 text-slate-600 hover:bg-slate-200/70"
+                    }`}
+                  >
+                    {tab.label}
+                  </button>
+                );
+              })}
+            </div>
 
-          {/* Search Input */}
-          <div className="relative w-full md:w-72">
-            <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder={t("history.searchPlaceholder")}
-              className="w-full rounded-xl bg-[#f8faf5] pl-10 pr-4 py-2 text-sm text-slate-900 placeholder:text-slate-400 border border-slate-200 focus:outline-none focus:border-[#166534] focus:bg-white"
-            />
+            {/* Search Input */}
+            <div className="relative w-full md:w-72">
+              <Search className="w-5 h-5 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder={t("history.searchPlaceholder")}
+                className="w-full min-h-[48px] rounded-xl bg-[#f8faf5] pl-11 pr-4 py-2.5 text-base text-slate-900 placeholder:text-slate-400 border border-slate-200 focus:outline-none focus:border-[#166534] focus:bg-white"
+              />
+            </div>
           </div>
-        </div>
-      </Card>
+        </Card>
+      </FadeIn>
 
       {/* Error Banner */}
       {error && (
@@ -292,7 +295,10 @@ export default function ScanHistory() {
                         </td>
                         <td className="py-3.5 px-5">
                           <Badge variant={badge.variant} icon={badge.icon}>
-                            {t(`status.${scan.status}`, scan.status)}
+                            {t(
+                              `farmerStatus.${scan.status}`,
+                              t(`status.${scan.status}`, scan.status)
+                            )}
                           </Badge>
                         </td>
                         <td className="py-3.5 px-5 text-slate-500 text-xs">
@@ -301,10 +307,10 @@ export default function ScanHistory() {
                         <td className="py-3.5 px-5 text-right">
                           <Link
                             to={`/farmer/scan/${scan.id}`}
-                            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold text-[#166534] bg-emerald-50 hover:bg-emerald-100 transition-colors"
+                            className="btn-interactive inline-flex items-center gap-2 min-h-[48px] px-3.5 py-2.5 rounded-xl text-xs font-bold text-[#166534] bg-emerald-50 hover:bg-emerald-100 transition-colors"
                           >
                             <span>{t("history.table.view")}</span>
-                            <ArrowRight className="w-3.5 h-3.5" />
+                            <ArrowRight className="w-4 h-4 shrink-0" />
                           </Link>
                         </td>
                       </tr>
@@ -317,7 +323,7 @@ export default function ScanHistory() {
 
           {/* Mobile Cards (< md) */}
           <div className="grid grid-cols-1 gap-3.5 md:hidden">
-            {filteredScans.map((scan) => {
+            {filteredScans.map((scan, idx) => {
               const effectiveClass =
                 scan.officer_label || scan.predicted_class;
               const isCorrected =
@@ -330,46 +336,51 @@ export default function ScanHistory() {
               const badge = statusBadgeProps(scan.status);
 
               return (
-                <Link key={scan.id} to={`/farmer/scan/${scan.id}`}>
-                  <Card
-                    padding="p-4"
-                    className="flex items-center justify-between gap-3.5 active:scale-[0.99] transition-transform"
-                  >
-                    <div className="flex items-center gap-3.5 min-w-0">
-                      <img
-                        src={getImageUrl(scan.image_url)}
-                        alt={formatDiseaseKey(effectiveClass, lang)}
-                        className="w-16 h-16 rounded-xl object-cover border border-slate-200 shrink-0 bg-slate-100"
-                      />
-                      <div className="min-w-0 space-y-1">
-                        {isCorrected && (
-                          <p className="text-[11px] line-through text-slate-400 truncate">
-                            {formatDiseaseKey(scan.predicted_class, lang)}
+                <FadeIn key={scan.id} delay={idx * 80}>
+                  <Link to={`/farmer/scan/${scan.id}`} className="block">
+                    <Card
+                      padding="p-4"
+                      className="btn-interactive flex items-center justify-between gap-3.5 transition-transform"
+                    >
+                      <div className="flex items-center gap-3.5 min-w-0">
+                        <img
+                          src={getImageUrl(scan.image_url)}
+                          alt={formatDiseaseKey(effectiveClass, lang)}
+                          className="w-16 h-16 rounded-xl object-cover border border-slate-200 shrink-0 bg-slate-100"
+                        />
+                        <div className="min-w-0 space-y-1">
+                          {isCorrected && (
+                            <p className="text-[11px] line-through text-slate-400 break-words">
+                              {formatDiseaseKey(scan.predicted_class, lang)}
+                            </p>
+                          )}
+                          <p className="text-sm font-bold text-slate-900 break-words">
+                            {formatDiseaseKey(effectiveClass, lang)}
                           </p>
-                        )}
-                        <p className="text-sm font-bold text-slate-900 truncate">
-                          {formatDiseaseKey(effectiveClass, lang)}
-                        </p>
-                        <div className="flex items-center gap-2 text-xs">
-                          <span className={`font-extrabold ${tone.textClass}`}>
-                            {formatConfidence(scan.confidence, 1)}
-                          </span>
-                          <span className="text-slate-300">•</span>
-                          <span className="text-slate-500">
-                            {formatDate(scan.created_at, lang)}
-                          </span>
-                        </div>
-                        <div>
-                          <Badge variant={badge.variant} icon={badge.icon}>
-                            {t(`status.${scan.status}`, scan.status)}
-                          </Badge>
+                          <div className="flex flex-wrap items-center gap-2 text-xs">
+                            <span className={`font-extrabold ${tone.textClass}`}>
+                              {formatConfidence(scan.confidence, 1)}
+                            </span>
+                            <span className="text-slate-300">•</span>
+                            <span className="text-slate-500">
+                              {formatDate(scan.created_at, lang)}
+                            </span>
+                          </div>
+                          <div>
+                            <Badge variant={badge.variant} icon={badge.icon}>
+                              {t(
+                                `farmerStatus.${scan.status}`,
+                                t(`status.${scan.status}`, scan.status)
+                              )}
+                            </Badge>
+                          </div>
                         </div>
                       </div>
-                    </div>
 
-                    <ArrowRight className="w-5 h-5 text-slate-400 shrink-0" />
-                  </Card>
-                </Link>
+                      <ArrowRight className="w-5 h-5 text-slate-400 shrink-0" />
+                    </Card>
+                  </Link>
+                </FadeIn>
               );
             })}
           </div>

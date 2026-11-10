@@ -16,6 +16,7 @@ import {
 import Logo from "../components/ui/Logo";
 import Input from "../components/ui/Input";
 import Button from "../components/ui/Button";
+import FadeIn from "../components/common/FadeIn";
 import { useAuth } from "../context/AuthContext";
 import { useLanguage } from "../context/LanguageContext";
 import { ROLE_REDIRECTS } from "../utils/constants";
@@ -108,22 +109,22 @@ export default function Login() {
   ];
 
   return (
-    <div className="min-h-screen grid grid-cols-1 lg:grid-cols-12 bg-[#f8faf5]">
+    <div className="min-h-screen grid grid-cols-1 lg:grid-cols-12 bg-[#f8faf5] overflow-x-hidden">
       {/* Left Branded Green Panel */}
-      <div className="lg:col-span-5 bg-gradient-to-br from-[#052e16] via-[#14532d] to-[#166534] text-white p-8 sm:p-12 flex flex-col justify-between relative overflow-hidden">
+      <div className="lg:col-span-5 bg-gradient-to-br from-[#052e16] via-[#14532d] to-[#166534] text-white px-4 py-8 sm:p-12 flex flex-col justify-between relative overflow-hidden">
         <div
           className="pointer-events-none absolute -top-24 -right-24 w-80 h-80 rounded-full bg-[#84cc16]/15 blur-3xl"
           aria-hidden="true"
         />
 
-        <div className="relative z-10 flex items-center justify-between">
+        <div className="relative z-10 flex items-center justify-between gap-2">
           <Logo variant="light" size="md" />
           <button
             type="button"
             onClick={toggleLanguage}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-white/10 hover:bg-white/20 text-white border border-white/20 transition-colors cursor-pointer"
+            className="btn-interactive inline-flex items-center gap-2 min-h-[48px] px-3.5 py-2.5 rounded-xl text-xs font-bold leading-[1.7] bg-white/10 hover:bg-white/20 text-white border border-white/20 transition-colors cursor-pointer"
           >
-            <Globe className="w-3.5 h-3.5 text-[#a3e635]" />
+            <Globe className="w-5 h-5 text-[#a3e635] shrink-0" />
             <span>{lang === "en" ? "සිංහල" : "English"}</span>
           </button>
         </div>
@@ -137,36 +138,39 @@ export default function Login() {
             {benefits.map((b, idx) => {
               const Icon = b.icon;
               return (
-                <div key={idx} className="flex items-start gap-3.5">
-                  <div className="w-10 h-10 rounded-xl bg-white/10 border border-white/15 flex items-center justify-center shrink-0 text-[#a3e635]">
-                    <Icon className="w-5 h-5" />
+                <FadeIn key={idx} delay={idx * 80}>
+                  <div className="flex items-start gap-3.5">
+                    <div className="w-11 h-11 rounded-xl bg-white/10 border border-white/15 flex items-center justify-center shrink-0 text-[#a3e635]">
+                      <Icon className="w-6 h-6" />
+                    </div>
+                    <div>
+                      <h3 className="text-sm font-bold text-white">{b.title}</h3>
+                      <p className="text-xs text-emerald-100/80 leading-relaxed mt-0.5">
+                        {b.desc}
+                      </p>
+                    </div>
                   </div>
-                  <div>
-                    <h3 className="text-sm font-bold text-white">{b.title}</h3>
-                    <p className="text-xs text-emerald-100/80 leading-relaxed mt-0.5">
-                      {b.desc}
-                    </p>
-                  </div>
-                </div>
+                </FadeIn>
               );
             })}
           </div>
         </div>
 
         <div className="relative z-10 text-xs text-emerald-200/70 flex items-center gap-2">
-          <CheckCircle2 className="w-4 h-4 text-[#a3e635]" />
+          <CheckCircle2 className="w-5 h-5 text-[#a3e635] shrink-0" />
           <span>© 2026 AgroLens AI • Sri Lanka</span>
         </div>
       </div>
 
       {/* Right Login Form Panel */}
-      <div className="lg:col-span-7 flex items-center justify-center p-6 sm:p-12">
-        <motion.div
-          initial={{ opacity: 0, y: 14 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.35 }}
-          className="w-full max-w-md bg-white rounded-2xl border border-slate-200/80 shadow-sm p-6 sm:p-8"
-        >
+      <div className="lg:col-span-7 flex items-center justify-center px-4 py-8 sm:p-12">
+        <FadeIn className="w-full max-w-md">
+          <motion.div
+            initial={{ opacity: 0, y: 14 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.35 }}
+            className="w-full bg-white rounded-2xl border border-slate-200/80 shadow-sm p-6 sm:p-8"
+          >
           <div className="mb-6">
             <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900">
               {t("auth.login.title")}
@@ -223,7 +227,7 @@ export default function Login() {
               required
             />
 
-            <div className="flex items-center justify-between pt-1">
+            <div className="flex items-center justify-between gap-2 pt-1">
               <label className="inline-flex items-center gap-2 text-xs font-medium text-slate-600 cursor-pointer select-none">
                 <input
                   type="checkbox"
@@ -233,6 +237,13 @@ export default function Login() {
                 />
                 <span>{t("auth.login.rememberMe")}</span>
               </label>
+
+              <Link
+                to="/forgot-password"
+                className="text-xs font-bold text-[#166534] hover:text-[#15803d] underline underline-offset-4 shrink-0"
+              >
+                {t("auth.login.forgotPasswordLink")}
+              </Link>
             </div>
 
             <div className="pt-2">
@@ -262,7 +273,8 @@ export default function Login() {
               {t("auth.login.createAccountLink")}
             </Link>
           </p>
-        </motion.div>
+          </motion.div>
+        </FadeIn>
       </div>
     </div>
   );

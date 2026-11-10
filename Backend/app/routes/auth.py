@@ -1,6 +1,8 @@
+from collections import defaultdict
 from datetime import datetime, timedelta, timezone
 import hashlib
 import math
+import secrets
 from typing import Any, Optional
 import uuid
 from bson import ObjectId
@@ -28,9 +30,43 @@ from app.core.security import (
     validate_password_policy,
     verify_password,
 )
-from app.models.user import TokenResponse, UserLogin, UserRegister, UserResponse
+from app.models.user import (
+    ForgotPasswordRequest,
+    ResetPasswordRequest,
+    TokenResponse,
+    UserLogin,
+    UserRegister,
+    UserResponse,
+)
+from app.services.email_service import send_password_reset_email
 
 router = APIRouter(prefix="/api/auth", tags=["Authentication"])
+
+FORGOT_PASSWORD_MAX_REQUESTS = 3
+FORGOT_PASSWORD_WINDOW_MINUTES = 15
+RESET_TOKEN_EXPIRE_MINUTES = 15
+FORGOT_PASSWORD_GENERIC_MESSAGE = (
+    "If this email is registered, a password reset link has been sent."
+)
+_forgot_password_requests: dict[str, list[datetime]] = defaultdict(list)
+
+
+def check_forgot_password_rate_limit(email: str) -> None:
+    """Enforce a maximum of 3 forgot-password requests per email per 15 minutes."""
+    now = datetime.now(timezone.utc)
+    cutoff = now - timedelta(minutes=FORGOT_PASSWORD_WINDOW_MINUTES)
+    recent = [ts for ts in _forgot_password_requests[email] if ts > cutoff]
+    if len(recent) >= FORGOT_PASSWORD_MAX_REQUESTS:
+        _forgot_password_requests[email] = recent
+        raise HTTPException(
+            status_code=status.HTTP_429_TOO_MANY_REQUESTS,
+            detail=(
+                "Too many password reset requests for this email. "
+                f"Please wait {FORGOT_PASSWORD_WINDOW_MINUTES} minutes and try again."
+            ),
+        )
+    recent.append(now)
+    _forgot_password_requests[email] = recent
 
 
 async def record_login_event(
@@ -858,6 +894,183 @@ async def deactivate_account(
         samesite="lax",
     )
     return {"message": "Account deactivated"}
+
+
+@router.post(
+    "/forgot-password",
+    status_code=status.HTTP_200_OK,
+    summary="Request a one-time password reset link by email",
+    openapi_extra={
+        "requestBody": {
+            "required": True,
+            "content": {
+                "application/json": {
+                    "schema": ForgotPasswordRequest.model_json_schema(),
+                }
+            },
+        }
+    },
+)
+async def forgot_password(request: Request) -> dict[str, str]:
+    """
+    Generate a 15-minute one-time password reset token and send a reset link.
+    Always returns the same generic response whether the email exists or not.
+    """
+    try:
+        body = await request.json()
+    except Exception:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Invalid request body",
+        )
+
+    if not isinstance(body, dict):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Invalid request body",
+        )
+
+    raw_email = str(body.get("email") or "").strip().lower()
+    if not raw_email:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Email address is required",
+        )
+
+    try:
+        payload = ForgotPasswordRequest(email=raw_email)
+        email = payload.email
+    except ValidationError:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Please enter a valid email address",
+        )
+
+    # Rate limit: max 3 requests per email per 15 minutes
+    check_forgot_password_rate_limit(email)
+
+    db = get_database()
+    now = datetime.now(timezone.utc)
+    user_doc = await db["users"].find_one({"email": email})
+
+    if user_doc is not None and user_doc.get("is_active", True):
+        raw_token = secrets.token_urlsafe(32)
+        token_hash = hashlib.sha256(raw_token.encode("utf-8")).hexdigest()
+        expires_at = now + timedelta(minutes=RESET_TOKEN_EXPIRE_MINUTES)
+
+        await db["users"].update_one(
+            {"_id": user_doc["_id"]},
+            {
+                "$set": {
+                    "reset_token_hash": token_hash,
+                    "reset_token_expires": expires_at,
+                    "updated_at": now,
+                }
+            },
+        )
+        send_password_reset_email(to_email=email, token=raw_token)
+
+    return {"message": FORGOT_PASSWORD_GENERIC_MESSAGE}
+
+
+@router.post(
+    "/reset-password",
+    status_code=status.HTTP_200_OK,
+    summary="Reset a user's password using a valid one-time token",
+    openapi_extra={
+        "requestBody": {
+            "required": True,
+            "content": {
+                "application/json": {
+                    "schema": ResetPasswordRequest.model_json_schema(),
+                }
+            },
+        }
+    },
+)
+async def reset_password(request: Request) -> dict[str, str]:
+    """
+    Validate a one-time password reset token, enforce registration password rules,
+    save the new bcrypt password hash, clear the reset token, and reset login lockouts.
+    """
+    try:
+        body = await request.json()
+    except Exception:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Invalid request body",
+        )
+
+    if not isinstance(body, dict):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Invalid request body",
+        )
+
+    raw_token = str(body.get("token") or "").strip()
+    new_password = body.get("new_password")
+
+    if not raw_token:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Invalid or expired password reset link. Please request a new link.",
+        )
+
+    if not new_password or not isinstance(new_password, str):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="New password is required",
+        )
+
+    token_hash = hashlib.sha256(raw_token.encode("utf-8")).hexdigest()
+    db = get_database()
+    now = datetime.now(timezone.utc)
+
+    user_doc = await db["users"].find_one({"reset_token_hash": token_hash})
+    if user_doc is None:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Invalid or expired password reset link. Please request a new link.",
+        )
+
+    expires_at = ensure_utc(user_doc.get("reset_token_expires"))
+    if expires_at is None or expires_at <= now:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Invalid or expired password reset link. Please request a new link.",
+        )
+
+    try:
+        validate_password_policy(new_password, email=user_doc.get("email"))
+    except ValueError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=str(exc),
+        )
+
+    await db["users"].update_one(
+        {"_id": user_doc["_id"]},
+        {
+            "$set": {
+                "hashed_password": hash_password(new_password),
+                "reset_token_hash": None,
+                "reset_token_expires": None,
+                "failed_login_count": 0,
+                "failed_login_attempts": 0,
+                "first_failed_login_at": None,
+                "locked_until": None,
+                "updated_at": now,
+            },
+            "$inc": {"token_version": 1},
+        },
+    )
+
+    await db["sessions"].update_many(
+        {"user_id": str(user_doc["_id"])},
+        {"$set": {"is_active": False, "revoked": True, "revoked_at": now}},
+    )
+
+    return {"message": "Password changed successfully"}
 
 
 @router.get(

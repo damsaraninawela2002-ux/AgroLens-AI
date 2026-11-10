@@ -54,10 +54,10 @@ export default function Navbar() {
           <button
             type="button"
             onClick={toggleLanguage}
-            className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold bg-white text-slate-700 border border-slate-200 hover:border-[#166534]/40 hover:text-[#166534] shadow-2xs transition-all cursor-pointer"
+            className="btn-interactive inline-flex items-center gap-2 min-h-[48px] px-3.5 py-2.5 rounded-xl text-xs font-bold leading-[1.7] bg-white text-slate-700 border border-slate-200 hover:border-[#166534]/40 hover:text-[#166534] shadow-2xs transition-all cursor-pointer"
             aria-label="Toggle language between Sinhala and English"
           >
-            <Globe className="w-3.5 h-3.5 text-[#15803d]" aria-hidden="true" />
+            <Globe className="w-5 h-5 text-[#15803d] shrink-0" aria-hidden="true" />
             <span>{lang === "en" ? "සිංහල" : "English"}</span>
           </button>
 
@@ -81,7 +81,7 @@ export default function Navbar() {
             <>
               <Link
                 to="/login"
-                className="px-4 py-2 text-sm font-semibold text-slate-700 hover:text-[#166534] transition-colors"
+                className="btn-interactive inline-flex items-center justify-center min-h-[48px] px-4 py-2.5 rounded-xl text-sm font-semibold text-slate-700 hover:text-[#166534] transition-colors"
               >
                 {t("nav.login")}
               </Link>
@@ -104,17 +104,17 @@ export default function Navbar() {
           <button
             type="button"
             onClick={toggleLanguage}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold bg-white text-slate-700 border border-slate-200"
+            className="btn-interactive inline-flex items-center gap-2 min-h-[48px] px-3 py-2 rounded-xl text-xs font-bold bg-white text-slate-700 border border-slate-200 cursor-pointer"
             aria-label="Switch Language"
           >
-            <Globe className="w-3.5 h-3.5 text-[#15803d]" />
+            <Globe className="w-5 h-5 text-[#15803d] shrink-0" />
             <span>{lang === "en" ? "සිංහල" : "EN"}</span>
           </button>
 
           <button
             type="button"
             onClick={() => setMobileMenuOpen((prev) => !prev)}
-            className="p-2 rounded-xl text-slate-700 hover:bg-slate-100 focus:outline-none"
+            className="btn-interactive inline-flex items-center justify-center min-h-[48px] min-w-[48px] p-2.5 rounded-xl text-slate-700 hover:bg-slate-100 focus:outline-none cursor-pointer"
             aria-label="Toggle Menu"
             aria-expanded={mobileMenuOpen}
           >

@@ -4,7 +4,7 @@ import ReactMarkdown from "react-markdown";
 import toast from "react-hot-toast";
 import {
   AlertCircle,
-  Bot,
+  MessageCircle,
   MessageSquare,
   MessageSquarePlus,
   PanelLeft,
@@ -17,6 +17,7 @@ import {
 import Card from "../../components/ui/Card";
 import Button from "../../components/ui/Button";
 import Spinner from "../../components/ui/Spinner";
+import FadeIn from "../../components/common/FadeIn";
 import ConfirmDialog from "../../components/admin/ConfirmDialog";
 import { useLanguage } from "../../context/LanguageContext";
 import {
@@ -164,7 +165,7 @@ export default function AIAssistant() {
     if (!el) return;
     el.style.height = "auto";
     const nextHeight = Math.min(el.scrollHeight, 150);
-    el.style.height = `${Math.max(44, nextHeight)}px`;
+    el.style.height = `${Math.max(48, nextHeight)}px`;
   }, []);
 
   useEffect(() => {
@@ -413,8 +414,8 @@ export default function AIAssistant() {
           <div className="relative z-10 w-76 max-w-[85vw] bg-white h-full shadow-2xl flex flex-col border-r border-slate-200">
             <div className="px-4 py-3.5 border-b border-slate-100 flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <div className="w-7 h-7 rounded-lg bg-emerald-100 text-[#166534] flex items-center justify-center">
-                  <Bot className="w-4 h-4" />
+                <div className="w-8 h-8 rounded-lg bg-emerald-100 text-[#166534] flex items-center justify-center">
+                  <MessageCircle className="w-5 h-5" />
                 </div>
                 <span className="text-sm font-extrabold text-slate-900">
                   {t("assistant.conversationsTitle")}
@@ -423,10 +424,10 @@ export default function AIAssistant() {
               <button
                 type="button"
                 onClick={() => setDrawerOpen(false)}
-                className="p-1.5 rounded-lg text-slate-500 hover:bg-slate-100 cursor-pointer"
+                className="btn-interactive inline-flex items-center justify-center min-h-[48px] min-w-[48px] p-2 rounded-lg text-slate-500 hover:bg-slate-100 cursor-pointer"
                 aria-label="Close drawer"
               >
-                <X className="w-4 h-4" />
+                <X className="w-5 h-5" />
               </button>
             </div>
             <div className="flex-1 overflow-hidden">
@@ -447,15 +448,15 @@ export default function AIAssistant() {
             <button
               type="button"
               onClick={() => setDrawerOpen(true)}
-              className="md:hidden p-2 rounded-xl border border-slate-200 bg-[#f8faf5] text-slate-700 hover:bg-emerald-50 hover:text-[#166534] transition-colors shrink-0 cursor-pointer"
+              className="btn-interactive md:hidden inline-flex items-center justify-center min-h-[48px] min-w-[48px] p-2.5 rounded-xl border border-slate-200 bg-[#f8faf5] text-slate-700 hover:bg-emerald-50 hover:text-[#166534] transition-colors shrink-0 cursor-pointer"
               aria-label={t("assistant.openConversations")}
             >
-              <PanelLeft className="w-4 h-4" />
+              <PanelLeft className="w-5 h-5" />
             </button>
 
             {/* Small AI Avatar */}
-            <div className="relative w-9 h-9 rounded-xl bg-gradient-to-br from-[#166534] to-[#15803d] text-white flex items-center justify-center shadow-xs shrink-0">
-              <Bot className="w-5 h-5" />
+            <div className="relative w-10 h-10 rounded-xl bg-gradient-to-br from-[#166534] to-[#15803d] text-white flex items-center justify-center shadow-xs shrink-0">
+              <MessageCircle className="w-6 h-6" />
               <span className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-[#84cc16] ring-2 ring-white" />
             </div>
 
@@ -526,7 +527,7 @@ export default function AIAssistant() {
             /* Empty state + Suggested question chips */
             <div className="h-full flex flex-col items-center justify-center max-w-xl mx-auto text-center px-2 py-6">
               <div className="w-14 h-14 rounded-2xl bg-emerald-100 text-[#166534] flex items-center justify-center mb-3 shadow-xs">
-                <Bot className="w-7 h-7" />
+                <MessageCircle className="w-7 h-7" />
               </div>
               <h3 className="text-base sm:text-lg font-extrabold text-slate-900">
                 {t("assistant.emptyTitle")}
@@ -539,17 +540,18 @@ export default function AIAssistant() {
                 <p className="text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-2.5">
                   {t("assistant.suggestedLabel")}
                 </p>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                  {suggestedChips.map((question) => (
-                    <button
-                      key={question}
-                      type="button"
-                      disabled={sending}
-                      onClick={() => handleSend(question)}
-                      className="text-left px-3.5 py-2.5 rounded-xl bg-white hover:bg-emerald-50/80 border border-slate-200/90 hover:border-emerald-300 text-xs font-semibold text-slate-700 hover:text-[#166534] shadow-2xs transition-all cursor-pointer"
-                    >
-                      {question}
-                    </button>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                  {suggestedChips.map((question, idx) => (
+                    <FadeIn key={question} delay={idx * 80} className="h-full">
+                      <button
+                        type="button"
+                        disabled={sending}
+                        onClick={() => handleSend(question)}
+                        className="btn-interactive w-full h-full min-h-[48px] text-left px-3.5 py-2.5 rounded-xl bg-white hover:bg-emerald-50/80 border border-slate-200/90 hover:border-emerald-300 text-xs font-semibold leading-[1.7] whitespace-normal break-words text-slate-700 hover:text-[#166534] shadow-2xs transition-all cursor-pointer"
+                      >
+                        {question}
+                      </button>
+                    </FadeIn>
                   ))}
                 </div>
               </div>
@@ -568,8 +570,8 @@ export default function AIAssistant() {
                     }`}
                   >
                     {!isUser && (
-                      <div className="w-7 h-7 rounded-lg bg-[#166534] text-white flex items-center justify-center shrink-0 mt-0.5">
-                        <Bot className="w-4 h-4" />
+                      <div className="w-8 h-8 rounded-lg bg-[#166534] text-white flex items-center justify-center shrink-0 mt-0.5">
+                        <MessageCircle className="w-5 h-5" />
                       </div>
                     )}
 
@@ -607,8 +609,8 @@ export default function AIAssistant() {
               {/* Typing indicator (3 animated dots) while waiting */}
               {sending && (
                 <div className="flex items-start gap-2.5 justify-start">
-                  <div className="w-7 h-7 rounded-lg bg-[#166534] text-white flex items-center justify-center shrink-0 mt-0.5">
-                    <Bot className="w-4 h-4" />
+                  <div className="w-8 h-8 rounded-lg bg-[#166534] text-white flex items-center justify-center shrink-0 mt-0.5">
+                    <MessageCircle className="w-5 h-5" />
                   </div>
                   <div className="px-4 py-3 rounded-2xl rounded-bl-xs bg-white border border-slate-200/80 shadow-xs flex items-center gap-1.5">
                     <span
@@ -671,17 +673,8 @@ export default function AIAssistant() {
                 }
                 onKeyDown={handleKeyDown}
                 placeholder={t("assistant.inputPlaceholder")}
-                className="w-full resize-none rounded-xl bg-[#f8faf5] border border-slate-200 px-3.5 py-2.5 pr-16 text-xs sm:text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#166534]/20 focus:border-[#166534] disabled:opacity-60 disabled:cursor-not-allowed transition-colors"
+                className="w-full min-h-[48px] resize-none rounded-xl bg-[#f8faf5] border border-slate-200 px-3.5 py-2.5 text-base text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#166534]/20 focus:border-[#166534] disabled:opacity-60 disabled:cursor-not-allowed transition-colors"
               />
-              <span
-                className={`absolute bottom-2 right-2.5 text-[10px] font-semibold select-none ${
-                  inputText.length >= MAX_MESSAGE_LENGTH
-                    ? "text-[#dc2626]"
-                    : "text-slate-400"
-                }`}
-              >
-                {inputText.length}/{MAX_MESSAGE_LENGTH}
-              </span>
             </div>
 
             <Button
@@ -692,7 +685,7 @@ export default function AIAssistant() {
               loading={sending}
               onClick={() => handleSend()}
               aria-label={t("assistant.sendBtn")}
-              className="shrink-0 h-[44px] px-3.5 sm:px-4"
+              className="shrink-0 min-h-[48px] h-auto px-3.5 sm:px-4"
             >
               <span className="hidden sm:inline">{t("assistant.sendBtn")}</span>
             </Button>

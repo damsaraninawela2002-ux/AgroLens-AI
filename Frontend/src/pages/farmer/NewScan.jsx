@@ -18,6 +18,7 @@ import {
 import Card from "../../components/ui/Card";
 import Button from "../../components/ui/Button";
 import Spinner from "../../components/ui/Spinner";
+import FadeIn from "../../components/common/FadeIn";
 import { useLanguage } from "../../context/LanguageContext";
 import api from "../../services/api";
 import { extractErrorMessage } from "../../utils/formatters";
@@ -27,9 +28,9 @@ const ALLOWED_MIME_TYPES = ["image/jpeg", "image/jpg", "image/png"];
 const ALLOWED_EXT_REGEX = /\.(jpe?g|png)$/i;
 
 const CROP_OPTIONS = [
-  { id: "tomato", emoji: "🍅", labelKey: "newScan.crops.tomato", fallback: "Tomato (තක්කාලි)" },
-  { id: "potato", emoji: "🥔", labelKey: "newScan.crops.potato", fallback: "Potato (අල)" },
-  { id: "pepper", emoji: "🫑", labelKey: "newScan.crops.pepper", fallback: "Bell Pepper (මාළු මිරිස්)" },
+  { id: "tomato", icon: "/icons/crops/tomato.svg", labelKey: "newScan.crops.tomato", fallback: "Tomato (තක්කාලි)" },
+  { id: "potato", icon: "/icons/crops/potato.svg", labelKey: "newScan.crops.potato", fallback: "Potato (අල)" },
+  { id: "pepper", icon: "/icons/crops/pepper.svg", labelKey: "newScan.crops.pepper", fallback: "Bell Pepper (මාළු මිරිස්)" },
 ];
 
 export default function NewScan() {
@@ -257,43 +258,49 @@ export default function NewScan() {
 
           {/* Required Crop Selector (3 Large Cards) */}
           <div className="space-y-2.5">
-            <label className="block text-sm font-extrabold text-slate-900">
-              {t("newScan.selectCropLabel")}
+            <label className="flex items-center gap-2 text-sm font-extrabold text-slate-900">
+              <Camera className="w-6 h-6 text-[#166534] shrink-0" />
+              <span>{t("newScan.selectCropLabel")}</span>
             </label>
             <div
               role="radiogroup"
               aria-label={t("newScan.selectCropLabel")}
               className="grid grid-cols-1 sm:grid-cols-3 gap-3"
             >
-              {CROP_OPTIONS.map((cropOpt) => {
+              {CROP_OPTIONS.map((cropOpt, idx) => {
                 const isSelected = selectedCrop === cropOpt.id;
                 return (
-                  <button
-                    key={cropOpt.id}
-                    type="button"
-                    role="radio"
-                    aria-checked={isSelected}
-                    disabled={analyzing}
-                    onClick={() => {
-                      setSelectedCrop(cropOpt.id);
-                      if (validationError) setValidationError("");
-                    }}
-                    className={`relative flex flex-col items-center justify-center gap-2 p-4 rounded-2xl border-2 text-center transition-all cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed ${
-                      isSelected
-                        ? "border-[#166534] bg-emerald-50/90 text-[#166534] shadow-sm shadow-[#166534]/15"
-                        : "border-slate-200 hover:border-emerald-300 bg-[#f8faf5] text-slate-800"
-                    }`}
-                  >
-                    <span className="text-3xl leading-none" aria-hidden="true">
-                      {cropOpt.emoji}
-                    </span>
-                    <span className="text-xs sm:text-sm font-extrabold leading-snug">
-                      {t(cropOpt.labelKey) || cropOpt.fallback}
-                    </span>
-                    {isSelected && (
-                      <CheckCircle2 className="w-4 h-4 text-[#166534] absolute top-2.5 right-2.5" />
-                    )}
-                  </button>
+                  <FadeIn key={cropOpt.id} delay={idx * 80} className="h-full">
+                    <button
+                      type="button"
+                      role="radio"
+                      aria-checked={isSelected}
+                      disabled={analyzing}
+                      onClick={() => {
+                        setSelectedCrop(cropOpt.id);
+                        if (validationError) setValidationError("");
+                      }}
+                      className={`btn-interactive relative w-full h-full min-h-[48px] flex flex-col items-center justify-center gap-2 p-4 rounded-2xl border-2 text-center leading-[1.7] whitespace-normal break-words transition-all cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed ${
+                        isSelected
+                          ? "border-[#166534] bg-emerald-50/90 text-[#166534] shadow-sm shadow-[#166534]/15"
+                          : "border-slate-200 hover:border-emerald-300 bg-[#f8faf5] text-slate-800"
+                      }`}
+                    >
+                      <img
+                        src={cropOpt.icon}
+                        alt={t(cropOpt.labelKey) || cropOpt.fallback}
+                        width={40}
+                        height={40}
+                        className="w-10 h-10 object-contain"
+                      />
+                      <span className="text-xs sm:text-sm font-extrabold leading-snug">
+                        {t(cropOpt.labelKey) || cropOpt.fallback}
+                      </span>
+                      {isSelected && (
+                        <CheckCircle2 className="w-5 h-5 text-[#166534] absolute top-2.5 right-2.5" />
+                      )}
+                    </button>
+                  </FadeIn>
                 );
               })}
             </div>
@@ -308,7 +315,7 @@ export default function NewScan() {
                 onDragOver={handleDragOver}
                 onDragLeave={handleDragLeave}
                 onDrop={handleDrop}
-                className={`rounded-2xl border-2 border-dashed p-8 sm:p-10 text-center transition-all ${
+                className={`rounded-2xl border-2 border-dashed p-6 sm:p-10 text-center transition-all ${
                   dragActive
                     ? "border-[#166534] bg-emerald-50/80 scale-[1.01]"
                     : "border-emerald-300/90 hover:border-[#166534] bg-[#f8faf5]"
@@ -330,6 +337,7 @@ export default function NewScan() {
                     variant="primary"
                     icon={ImagePlus}
                     onClick={() => fileInputRef.current?.click()}
+                    className="w-full sm:w-auto"
                   >
                     {t("newScan.choosePhotoBtn")}
                   </Button>
@@ -338,7 +346,7 @@ export default function NewScan() {
                     variant="secondary"
                     icon={Camera}
                     onClick={() => cameraInputRef.current?.click()}
-                    className="sm:hidden"
+                    className="w-full sm:hidden"
                   >
                     {t("newScan.takePhotoBtn")}
                   </Button>
@@ -479,35 +487,37 @@ export default function NewScan() {
 
         {/* Right: Photo Tips Card */}
         <Card className="lg:col-span-5 bg-gradient-to-b from-emerald-50/70 to-white border-emerald-200/80 space-y-4">
-          <div>
-            <h3 className="text-lg font-extrabold text-slate-900">
-              {t("newScan.tips.title")}
-            </h3>
-            <p className="text-xs text-slate-600 mt-0.5">
-              {t("newScan.tips.subtitle")}
-            </p>
+          <div className="flex items-start gap-2.5">
+            <Sparkles className="w-6 h-6 text-[#166534] shrink-0 mt-0.5" />
+            <div>
+              <h3 className="text-lg font-extrabold text-slate-900">
+                {t("newScan.tips.title")}
+              </h3>
+              <p className="text-xs text-slate-600 mt-0.5">
+                {t("newScan.tips.subtitle")}
+              </p>
+            </div>
           </div>
 
           <div className="space-y-3.5 pt-1">
             {tips.map((tip, idx) => {
               const Icon = tip.icon;
               return (
-                <div
-                  key={idx}
-                  className="flex items-start gap-3.5 p-3.5 rounded-xl bg-white border border-slate-200/70 shadow-2xs"
-                >
-                  <div className="w-9 h-9 rounded-xl bg-emerald-100 text-[#166534] flex items-center justify-center shrink-0">
-                    <Icon className="w-5 h-5" />
+                <FadeIn key={idx} delay={idx * 80}>
+                  <div className="flex items-start gap-3.5 p-3.5 rounded-xl bg-white border border-slate-200/70 shadow-2xs">
+                    <div className="w-11 h-11 rounded-xl bg-emerald-100 text-[#166534] flex items-center justify-center shrink-0">
+                      <Icon className="w-6 h-6" />
+                    </div>
+                    <div>
+                      <h4 className="text-sm font-bold text-slate-900">
+                        {tip.title}
+                      </h4>
+                      <p className="text-xs text-slate-600 leading-relaxed mt-0.5">
+                        {tip.desc}
+                      </p>
+                    </div>
                   </div>
-                  <div>
-                    <h4 className="text-sm font-bold text-slate-900">
-                      {tip.title}
-                    </h4>
-                    <p className="text-xs text-slate-600 leading-relaxed mt-0.5">
-                      {tip.desc}
-                    </p>
-                  </div>
-                </div>
+                </FadeIn>
               );
             })}
           </div>

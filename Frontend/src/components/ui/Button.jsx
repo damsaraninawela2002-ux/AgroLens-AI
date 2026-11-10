@@ -14,7 +14,7 @@ export default function Button({
   ...props
 }) {
   const baseStyles =
-    "inline-flex items-center justify-center gap-2 font-semibold rounded-xl transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed active:scale-[0.99]";
+    "btn-interactive inline-flex items-center justify-center gap-2 h-auto min-h-[48px] font-semibold leading-[1.7] whitespace-normal break-words rounded-xl transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed";
 
   const variants = {
     primary:
@@ -32,9 +32,9 @@ export default function Button({
   };
 
   const sizes = {
-    sm: "px-3.5 py-2 text-xs",
+    sm: "px-3.5 py-2.5 text-xs",
     md: "px-5 py-2.5 text-sm",
-    lg: "px-6 py-3.5 text-base",
+    lg: "px-6 py-3 text-base",
   };
 
   return (
@@ -48,11 +48,11 @@ export default function Button({
     >
       {loading && <Spinner size="sm" />}
       {!loading && Icon && iconPosition === "left" && (
-        <Icon className="w-4 h-4 shrink-0" aria-hidden="true" />
+        <Icon className="w-5 h-5 shrink-0" aria-hidden="true" />
       )}
       <span>{children}</span>
       {!loading && Icon && iconPosition === "right" && (
-        <Icon className="w-4 h-4 shrink-0" aria-hidden="true" />
+        <Icon className="w-5 h-5 shrink-0" aria-hidden="true" />
       )}
     </button>
   );

@@ -50,6 +50,18 @@ class Settings:
         self.GEMINI_MODEL: str = (
             os.getenv("GEMINI_MODEL") or "gemini-2.5-flash"
         ).strip()
+        self.SMTP_HOST: str = (os.getenv("SMTP_HOST") or "").strip()
+        raw_smtp_port = (os.getenv("SMTP_PORT") or "587").strip()
+        try:
+            self.SMTP_PORT: int = int(raw_smtp_port) if raw_smtp_port else 587
+        except ValueError:
+            self.SMTP_PORT = 587
+        self.SMTP_USER: str = (os.getenv("SMTP_USER") or "").strip()
+        self.SMTP_PASSWORD: str = (os.getenv("SMTP_PASSWORD") or "").strip()
+        self.EMAIL_FROM: str = (os.getenv("EMAIL_FROM") or "").strip()
+        self.FRONTEND_URL: str = (
+            os.getenv("FRONTEND_URL") or "http://localhost:5173"
+        ).strip().rstrip("/")
 
 
 settings = Settings()

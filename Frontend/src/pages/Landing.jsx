@@ -2,20 +2,19 @@ import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
   ArrowRight,
-  Bot,
   Camera,
   CheckCircle2,
-  Cpu,
   Eye,
-  FileCheck2,
   Flame,
   Globe2,
   Layers,
   Leaf,
   MapPinned,
+  MessageCircle,
   Microscope,
   Radio,
   ScanLine,
+  ScanSearch,
   ShieldCheck,
   Sparkles,
   Sprout,
@@ -25,7 +24,8 @@ import {
 import Button from "../components/ui/Button";
 import Card from "../components/ui/Card";
 import Badge from "../components/ui/Badge";
-import TechStackAssembly from "../components/landing/TechStackAssembly";
+import FadeIn from "../components/common/FadeIn";
+import FarmerBenefits from "../components/landing/FarmerBenefits";
 import { useLanguage } from "../context/LanguageContext";
 import { useAuth } from "../context/AuthContext";
 import { ROLE_REDIRECTS } from "../utils/constants";
@@ -80,10 +80,10 @@ export default function Landing() {
       status: "live",
     },
     {
-      icon: Bot,
+      icon: MessageCircle,
       title: t("features.items.chatbot.title"),
       desc: t("features.items.chatbot.desc"),
-      status: "soon",
+      status: "live",
     },
     {
       icon: UserCheck,
@@ -112,12 +112,12 @@ export default function Landing() {
       desc: t("howItWorks.step1Desc"),
     },
     {
-      icon: Cpu,
+      icon: ScanSearch,
       title: t("howItWorks.step2Title"),
       desc: t("howItWorks.step2Desc"),
     },
     {
-      icon: FileCheck2,
+      icon: Leaf,
       title: t("howItWorks.step3Title"),
       desc: t("howItWorks.step3Desc"),
     },
@@ -150,13 +150,14 @@ export default function Landing() {
     },
     {
       icon: Users,
-      badge: t("roles.admin.badge"),
-      title: t("roles.admin.title"),
-      desc: t("roles.admin.desc"),
+      badge: t("roles.benefits.badge"),
+      title: t("roles.benefits.title"),
+      desc: t("roles.benefits.desc"),
       points: [
-        t("roles.admin.point1"),
-        t("roles.admin.point2"),
-        t("roles.admin.point3"),
+        t("roles.benefits.point1"),
+        t("roles.benefits.point2"),
+        t("roles.benefits.point3"),
+        t("roles.benefits.point4"),
       ],
       accent: "border-slate-200 bg-gradient-to-b from-slate-50/70 to-white",
     },
@@ -194,26 +195,26 @@ export default function Landing() {
               </p>
 
               <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3.5 pt-2">
-                <Link to={primaryCtaPath}>
+                <Link to={primaryCtaPath} className="w-full sm:w-auto">
                   <Button
                     variant="primary"
                     size="lg"
                     icon={ArrowRight}
                     iconPosition="right"
-                    fullWidth
+                    className="w-full sm:w-auto"
                   >
                     {t("hero.ctaPrimary")}
                   </Button>
                 </Link>
-                <a href="#how-it-works">
-                  <Button variant="outline" size="lg" fullWidth>
+                <a href="#how-it-works" className="w-full sm:w-auto">
+                  <Button variant="outline" size="lg" className="w-full sm:w-auto">
                     {t("hero.ctaSecondary")}
                   </Button>
                 </a>
               </div>
 
               <div className="pt-2 flex items-center gap-2.5 text-xs sm:text-sm font-medium text-slate-600">
-                <CheckCircle2 className="w-4 h-4 text-[#15803d] shrink-0" />
+                <CheckCircle2 className="w-5 h-5 text-[#15803d] shrink-0" />
                 <span>{t("hero.trustNote")}</span>
               </div>
             </motion.div>
@@ -259,7 +260,7 @@ export default function Landing() {
                         {/* Scanner Reticle Box */}
                         <div className="absolute top-5 right-5 w-14 h-14 rounded-lg border-2 border-[#f59e0b] shadow-sm flex items-start justify-end p-1">
                           <span className="px-1 py-0.5 rounded text-[9px] font-bold bg-[#dc2626] text-white leading-none">
-                            CAM
+                            {t("hero.mockup.healthyArea")}
                           </span>
                         </div>
                       </div>
@@ -320,7 +321,7 @@ export default function Landing() {
                       </span>
                     </span>
                     <span className="shrink-0 font-mono text-[10px] px-2 py-0.5 rounded bg-white/10">
-                      Conv_1
+                      {t("hero.mockup.diseasedArea")}
                     </span>
                   </div>
                 </div>
@@ -352,22 +353,21 @@ export default function Landing() {
             {stats.map((item, index) => {
               const Icon = item.icon;
               return (
-                <div
-                  key={index}
-                  className="flex items-center gap-4 p-3 rounded-2xl bg-[#f8faf5] border border-slate-200/60"
-                >
-                  <div className="w-12 h-12 rounded-xl bg-emerald-100/80 text-[#166534] flex items-center justify-center shrink-0">
-                    <Icon className="w-6 h-6" />
+                <FadeIn key={index} delay={index * 80}>
+                  <div className="flex items-center gap-4 p-3 rounded-2xl bg-[#f8faf5] border border-slate-200/60 h-full">
+                    <div className="w-12 h-12 rounded-xl bg-emerald-100/80 text-[#166534] flex items-center justify-center shrink-0">
+                      <Icon className="w-6 h-6" />
+                    </div>
+                    <div>
+                      <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">
+                        {item.label}
+                      </p>
+                      <p className="text-base font-extrabold text-slate-900 mt-0.5">
+                        {item.value}
+                      </p>
+                    </div>
                   </div>
-                  <div>
-                    <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">
-                      {item.label}
-                    </p>
-                    <p className="text-base font-extrabold text-slate-900 mt-0.5">
-                      {item.value}
-                    </p>
-                  </div>
-                </div>
+                </FadeIn>
               );
             })}
           </div>
@@ -387,31 +387,36 @@ export default function Landing() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {features.map((feat, idx) => {
               const Icon = feat.icon;
               const isLive = feat.status === "live";
               return (
-                <Card key={idx} hover className="flex flex-col justify-between">
-                  <div>
-                    <div className="flex items-center justify-between gap-2 mb-5">
-                      <div className="w-12 h-12 rounded-2xl bg-emerald-50 border border-emerald-200/70 text-[#166534] flex items-center justify-center">
-                        <Icon className="w-6 h-6" />
+                <FadeIn key={idx} delay={idx * 80} className="h-full">
+                  <Card hover className="flex flex-col justify-between h-full">
+                    <div>
+                      <div className="flex items-center justify-between gap-2 mb-5">
+                        <div className="w-12 h-12 rounded-2xl bg-emerald-50 border border-emerald-200/70 text-[#166534] flex items-center justify-center shrink-0">
+                          <Icon className="w-6 h-6" />
+                        </div>
+                        <Badge
+                          variant={isLive ? "lime" : "warning"}
+                          icon={isLive ? CheckCircle2 : undefined}
+                        >
+                          {isLive
+                            ? t("features.liveBadge")
+                            : t("features.comingSoon")}
+                        </Badge>
                       </div>
-                      <Badge variant={isLive ? "lime" : "warning"}>
-                        {isLive
-                          ? t("features.liveBadge")
-                          : t("features.comingSoon")}
-                      </Badge>
+                      <h3 className="text-lg font-bold text-slate-900 mb-2">
+                        {feat.title}
+                      </h3>
+                      <p className="text-sm text-slate-600 leading-relaxed">
+                        {feat.desc}
+                      </p>
                     </div>
-                    <h3 className="text-lg font-bold text-slate-900 mb-2">
-                      {feat.title}
-                    </h3>
-                    <p className="text-sm text-slate-600 leading-relaxed">
-                      {feat.desc}
-                    </p>
-                  </div>
-                </Card>
+                  </Card>
+                </FadeIn>
               );
             })}
           </div>
@@ -431,37 +436,36 @@ export default function Landing() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
             {steps.map((step, i) => {
               const Icon = step.icon;
               return (
-                <div
-                  key={i}
-                  className="relative rounded-2xl bg-[#f8faf5] border border-slate-200/80 p-7 space-y-4"
-                >
-                  <div className="flex items-center justify-between">
-                    <div className="w-12 h-12 rounded-2xl bg-[#166534] text-white flex items-center justify-center shadow-md shadow-[#166534]/20">
-                      <Icon className="w-6 h-6" />
+                <FadeIn key={i} delay={i * 80} className="h-full">
+                  <div className="relative rounded-2xl bg-[#f8faf5] border border-slate-200/80 p-7 space-y-4 h-full">
+                    <div className="flex items-center justify-between">
+                      <div className="w-12 h-12 rounded-2xl bg-[#166534] text-white flex items-center justify-center shadow-md shadow-[#166534]/20 shrink-0">
+                        <Icon className="w-6 h-6" />
+                      </div>
+                      <span className="text-3xl font-extrabold text-slate-200">
+                        0{i + 1}
+                      </span>
                     </div>
-                    <span className="text-3xl font-extrabold text-slate-200">
-                      0{i + 1}
-                    </span>
+                    <h3 className="text-lg font-bold text-slate-900">
+                      {step.title}
+                    </h3>
+                    <p className="text-sm text-slate-600 leading-relaxed">
+                      {step.desc}
+                    </p>
                   </div>
-                  <h3 className="text-lg font-bold text-slate-900">
-                    {step.title}
-                  </h3>
-                  <p className="text-sm text-slate-600 leading-relaxed">
-                    {step.desc}
-                  </p>
-                </div>
+                </FadeIn>
               );
             })}
           </div>
         </div>
       </section>
 
-      {/* ================= BUILT WITH (TECH STACK ASSEMBLY) ================= */}
-      <TechStackAssembly />
+      {/* ================= FOR FARMERS (6 CARDS) ================= */}
+      <FarmerBenefits />
 
       {/* ================= ROLES SECTION ================= */}
       <section id="roles" className="py-20 bg-[#f8faf5]">
@@ -474,42 +478,43 @@ export default function Landing() {
             <p className="text-base text-slate-600">{t("roles.subtitle")}</p>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {roles.map((role, idx) => {
               const Icon = role.icon;
               return (
-                <Card
-                  key={idx}
-                  className={`flex flex-col justify-between ${role.accent}`}
-                >
-                  <div className="space-y-4">
-                    <div className="flex items-center justify-between">
-                      <div className="w-11 h-11 rounded-xl bg-[#166534] text-white flex items-center justify-center">
-                        <Icon className="w-5 h-5" />
+                <FadeIn key={idx} delay={idx * 80} className="h-full">
+                  <Card
+                    className={`flex flex-col justify-between h-full ${role.accent}`}
+                  >
+                    <div className="space-y-4">
+                      <div className="flex items-center justify-between gap-2">
+                        <div className="w-12 h-12 rounded-xl bg-[#166534] text-white flex items-center justify-center shrink-0">
+                          <Icon className="w-6 h-6" />
+                        </div>
+                        <Badge variant="neutral">{role.badge}</Badge>
                       </div>
-                      <Badge variant="neutral">{role.badge}</Badge>
+
+                      <h3 className="text-xl font-bold text-slate-900">
+                        {role.title}
+                      </h3>
+                      <p className="text-sm text-slate-600 leading-relaxed">
+                        {role.desc}
+                      </p>
+
+                      <ul className="space-y-2.5 pt-2">
+                        {role.points.map((pt, pIdx) => (
+                          <li
+                            key={pIdx}
+                            className="flex items-start gap-2.5 text-xs sm:text-sm text-slate-700"
+                          >
+                            <CheckCircle2 className="w-5 h-5 text-[#15803d] shrink-0 mt-0.5" />
+                            <span>{pt}</span>
+                          </li>
+                        ))}
+                      </ul>
                     </div>
-
-                    <h3 className="text-xl font-bold text-slate-900">
-                      {role.title}
-                    </h3>
-                    <p className="text-sm text-slate-600 leading-relaxed">
-                      {role.desc}
-                    </p>
-
-                    <ul className="space-y-2.5 pt-2">
-                      {role.points.map((pt, pIdx) => (
-                        <li
-                          key={pIdx}
-                          className="flex items-start gap-2.5 text-xs sm:text-sm text-slate-700"
-                        >
-                          <CheckCircle2 className="w-4 h-4 text-[#15803d] shrink-0 mt-0.5" />
-                          <span>{pt}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                </Card>
+                  </Card>
+                </FadeIn>
               );
             })}
           </div>
@@ -535,23 +540,22 @@ export default function Landing() {
             </div>
 
             <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3.5 w-full lg:w-auto shrink-0">
-              <Link to="/register">
+              <Link to="/register" className="w-full sm:w-auto">
                 <Button
                   variant="accent"
                   size="lg"
                   icon={ArrowRight}
                   iconPosition="right"
-                  fullWidth
+                  className="w-full sm:w-auto"
                 >
                   {t("cta.primaryBtn")}
                 </Button>
               </Link>
-              <Link to="/login">
+              <Link to="/login" className="w-full sm:w-auto">
                 <Button
                   variant="outline"
                   size="lg"
-                  fullWidth
-                  className="!bg-white/10 !text-white !border-white/25 hover:!bg-white/20"
+                  className="w-full sm:w-auto !bg-white/10 !text-white !border-white/25 hover:!bg-white/20"
                 >
                   {t("cta.secondaryBtn")}
                 </Button>

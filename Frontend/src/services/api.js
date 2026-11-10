@@ -59,7 +59,9 @@ api.interceptors.response.use(
       requestUrl.includes("/api/auth/login") ||
       requestUrl.includes("/api/auth/register") ||
       requestUrl.includes("/api/auth/refresh") ||
-      requestUrl.includes("/api/auth/logout");
+      requestUrl.includes("/api/auth/logout") ||
+      requestUrl.includes("/api/auth/forgot-password") ||
+      requestUrl.includes("/api/auth/reset-password");
 
     if (status === 401 && originalRequest && !originalRequest._retry && !isAuthEndpoint) {
       originalRequest._retry = true;

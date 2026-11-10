@@ -5,15 +5,14 @@ import {
   AlertTriangle,
   ArrowLeft,
   ArrowRight,
-  Bot,
   Camera,
   CheckCircle2,
   Clock,
   FileText,
   MapPin,
+  MessageCircle,
   Printer,
   RefreshCw,
-  ShieldAlert,
   ShieldCheck,
   Sprout,
   UserCheck,
@@ -21,6 +20,7 @@ import {
 import Card from "../../components/ui/Card";
 import Badge from "../../components/ui/Badge";
 import Button from "../../components/ui/Button";
+import FadeIn from "../../components/common/FadeIn";
 import ImageCompareViewer from "../../components/scan/ImageCompareViewer";
 import { useLanguage } from "../../context/LanguageContext";
 import { getDiagnosisById } from "../../services/predictService";
@@ -170,13 +170,13 @@ export default function ScanResult() {
     if (st === "pending_review") {
       return { variant: "warning", icon: Clock };
     }
-    if (st === "confirmed") {
+    if (st === "confirmed" || st === "auto") {
       return { variant: "success", icon: CheckCircle2 };
     }
     if (st === "corrected") {
       return { variant: "info", icon: ShieldCheck };
     }
-    return { variant: "success", icon: ShieldCheck };
+    return { variant: "success", icon: CheckCircle2 };
   };
 
   const statusBadge = getStatusBadgeProps(diagnosis.status);
@@ -210,26 +210,27 @@ export default function ScanResult() {
       className="space-y-6"
     >
       {/* Back Navigation + Top Action Bar */}
-      <div className="no-print flex flex-wrap items-center justify-between gap-3">
+      <div className="no-print flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <Link
           to="/farmer/history"
-          className="inline-flex items-center gap-2 text-sm font-bold text-slate-600 hover:text-[#166534] transition-colors"
+          className="btn-interactive inline-flex items-center gap-2 min-h-[48px] px-3 py-2 rounded-xl text-sm font-bold text-slate-600 hover:bg-white hover:text-[#166534] transition-colors self-start"
         >
-          <ArrowLeft className="w-4 h-4" />
+          <ArrowLeft className="w-5 h-5 shrink-0" />
           <span>{t("scanResult.backToHistory")}</span>
         </Link>
 
-        <div className="flex flex-wrap items-center gap-2.5">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 w-full sm:w-auto">
           <Button
             variant="outline"
             size="sm"
             icon={Printer}
             onClick={() => window.print()}
+            className="w-full sm:w-auto"
           >
             {t("scanResult.actions.downloadReport")}
           </Button>
-          <Link to="/farmer/scan">
-            <Button variant="primary" size="sm" icon={Camera}>
+          <Link to="/farmer/scan" className="w-full sm:w-auto">
+            <Button variant="primary" size="sm" icon={Camera} className="w-full sm:w-auto">
               {t("scanResult.actions.scanAnother")}
             </Button>
           </Link>
@@ -242,8 +243,8 @@ export default function ScanResult() {
           role="alert"
           className="rounded-2xl bg-amber-50 border border-amber-300/90 p-4 sm:p-5 flex items-start gap-3.5 text-amber-950 shadow-xs print-card"
         >
-          <div className="w-10 h-10 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center shrink-0">
-            <AlertTriangle className="w-5 h-5" />
+          <div className="w-11 h-11 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center shrink-0">
+            <AlertTriangle className="w-6 h-6" />
           </div>
           <div className="space-y-1">
             <h3 className="text-sm sm:text-base font-extrabold text-amber-900">
@@ -262,8 +263,8 @@ export default function ScanResult() {
           role="status"
           className="rounded-2xl bg-amber-50 border border-amber-300/90 p-4 sm:p-5 flex items-start gap-3.5 text-amber-950 shadow-xs print-card"
         >
-          <div className="w-10 h-10 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center shrink-0">
-            <Clock className="w-5 h-5" />
+          <div className="w-11 h-11 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center shrink-0">
+            <Clock className="w-6 h-6" />
           </div>
           <div className="space-y-1">
             <h3 className="text-sm sm:text-base font-extrabold text-amber-900">
@@ -277,20 +278,21 @@ export default function ScanResult() {
       )}
 
       {/* ================= HEADER & CONFIDENCE GAUGE CARD ================= */}
-      <Card className="print-card p-6 sm:p-8">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
-          {/* Disease Name, Crop & Metadata */}
-          <div className="lg:col-span-8 space-y-3">
-            <div className="flex flex-wrap items-center gap-2">
-              <Badge
-                variant={isHealthy ? "lime" : "danger"}
-                icon={isHealthy ? CheckCircle2 : ShieldAlert}
-              >
-                {isHealthy ? t("status.healthy") : t("status.diseased")}
-              </Badge>
+      <FadeIn>
+        <Card className="print-card p-6 sm:p-8">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+            {/* Disease Name, Crop & Metadata */}
+            <div className="lg:col-span-8 space-y-3">
+              <div className="flex flex-wrap items-center gap-2">
+                <Badge
+                  variant={isHealthy ? "lime" : "danger"}
+                  icon={isHealthy ? CheckCircle2 : AlertTriangle}
+                >
+                  {isHealthy ? t("status.healthy") : t("status.diseased")}
+                </Badge>
 
               <Badge variant={statusBadge.variant} icon={statusBadge.icon}>
-                {t(`status.${diagnosis.status}`, diagnosis.status)}
+                {t(`farmerStatus.${diagnosis.status}`, t(`status.${diagnosis.status}`, diagnosis.status))}
               </Badge>
 
               <Badge variant="neutral" icon={Sprout}>
@@ -371,14 +373,14 @@ export default function ScanResult() {
                   {formatConfidence(confidenceValue, 1)}
                 </span>
                 <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
-                  Confidence
+                  {t("scanResult.resultClarity")}
                 </span>
               </div>
             </div>
 
             <div className="text-center space-y-1">
               <p className="text-xs font-bold text-slate-800">
-                {t("scanResult.confidenceTitle")}
+                {t("scanResult.resultClarity")}
               </p>
               <Badge variant={tone.badgeVariant}>
                 {confidenceValue >= 85
@@ -390,28 +392,30 @@ export default function ScanResult() {
             </div>
           </div>
         </div>
-      </Card>
+        </Card>
+      </FadeIn>
 
       {/* ================= OFFICER REVIEW CARD (IF REVIEWED) ================= */}
       {isReviewed && (
-        <Card
-          className={`print-card border ${
-            isCorrected
-              ? "border-sky-200 bg-gradient-to-r from-sky-50/70 to-white"
-              : "border-emerald-200 bg-gradient-to-r from-emerald-50/70 to-white"
-          }`}
-        >
-          <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
-            <div className="flex items-start gap-3.5">
-              <div
-                className={`w-11 h-11 rounded-xl flex items-center justify-center shrink-0 ${
-                  isCorrected
-                    ? "bg-sky-100 text-sky-700"
-                    : "bg-emerald-100 text-[#166534]"
-                }`}
-              >
-                <UserCheck className="w-5 h-5" />
-              </div>
+        <FadeIn delay={80}>
+          <Card
+            className={`print-card border ${
+              isCorrected
+                ? "border-sky-200 bg-gradient-to-r from-sky-50/70 to-white"
+                : "border-emerald-200 bg-gradient-to-r from-emerald-50/70 to-white"
+            }`}
+          >
+            <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
+              <div className="flex items-start gap-3.5">
+                <div
+                  className={`w-11 h-11 rounded-xl flex items-center justify-center shrink-0 ${
+                    isCorrected
+                      ? "bg-sky-100 text-sky-700"
+                      : "bg-emerald-100 text-[#166534]"
+                  }`}
+                >
+                  <UserCheck className="w-6 h-6" />
+                </div>
 
               <div className="space-y-2">
                 <div className="flex flex-wrap items-center gap-2">
@@ -479,111 +483,121 @@ export default function ScanResult() {
                     </span>
                   )}
                 </div>
+                </div>
               </div>
             </div>
-          </div>
-        </Card>
+          </Card>
+        </FadeIn>
       )}
 
-      {/* ================= VISUAL & GRAD-CAM EXPLAINABILITY + TOP 3 ================= */}
+      {/* ================= VISUAL & SYMPTOMS OF THIS DISEASE ================= */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
         {/* Left: Reused ImageCompareViewer Component */}
         <ImageCompareViewer
           imageUrl={diagnosis.image_url}
           heatmapUrl={diagnosis.heatmap_url}
+          isFarmer
           className="lg:col-span-7"
         />
 
-        {/* Right: Top 3 Model Predictions */}
-        <Card className="lg:col-span-5 space-y-5 print-card">
-          <div className="pb-3 border-b border-slate-100">
-            <h2 className="text-lg font-extrabold text-slate-900">
-              {t("scanResult.top3Title")}
-            </h2>
-            <p className="text-xs text-slate-500 mt-0.5">
-              {t("scanResult.top3Subtitle")}
-            </p>
-          </div>
+        {/* Right: Symptoms of this disease */}
+        <FadeIn delay={80} className="lg:col-span-5">
+          <Card className="space-y-4 print-card">
+            <div className="flex items-start gap-2.5 pb-3 border-b border-slate-100">
+              {isHealthy ? (
+                <CheckCircle2 className="w-6 h-6 text-[#166534] shrink-0 mt-0.5" />
+              ) : (
+                <AlertTriangle className="w-6 h-6 text-[#dc2626] shrink-0 mt-0.5" />
+              )}
+              <div>
+                <h2 className="text-lg font-extrabold text-slate-900">
+                  {t("scanResult.symptomsCardTitle")}
+                </h2>
+                <p className="text-xs text-slate-500 mt-0.5">
+                  {t("scanResult.symptomsCardSubtitle")}
+                </p>
+              </div>
+            </div>
 
-          <div className="space-y-4">
-            {(diagnosis.top3 || []).map((item, idx) => {
-              const conf = Number(item.confidence) || 0;
-              const isTop = idx === 0;
-              const itemTone = getConfidenceTone(conf);
+          {(() => {
+            const symptomsText = treatment
+              ? lang === "si"
+                ? treatment.symptoms_si
+                : treatment.symptoms_en
+              : "";
+            const symptomsUnverified = isToBeVerified(symptomsText);
 
+            if (isHealthy && !symptomsText) {
               return (
-                <div
-                  key={item.class_name || idx}
-                  className={`p-3.5 rounded-xl border ${
-                    isTop
-                      ? "bg-emerald-50/40 border-emerald-200"
-                      : "bg-slate-50/60 border-slate-200/70"
-                  } space-y-2`}
-                >
-                  <div className="flex items-center justify-between gap-2 text-xs sm:text-sm">
-                    <span className="font-bold text-slate-900 truncate">
-                      {idx + 1}. {formatDiseaseKey(item.class_name, lang)}
-                    </span>
-                    <span
-                      className={`font-extrabold shrink-0 ${
-                        isTop ? itemTone.textClass : "text-slate-700"
-                      }`}
-                    >
-                      {formatConfidence(conf, 2)}
-                    </span>
-                  </div>
+                <div className="rounded-2xl bg-emerald-50/70 border border-emerald-200 p-4 text-sm font-medium text-[#166534] leading-relaxed">
+                  {t("scanResult.healthyLeafSymptomsText")}
+                </div>
+              );
+            }
 
-                  <div className="w-full h-2.5 rounded-full bg-slate-200/80 overflow-hidden">
-                    <div
-                      className={`h-full rounded-full transition-all duration-500 ${
-                        isTop ? itemTone.barClass : "bg-slate-400"
-                      }`}
-                      style={{ width: `${Math.min(100, Math.max(2, conf))}%` }}
-                    />
+            if (symptomsUnverified || !symptomsText) {
+              return (
+                <div className="rounded-2xl bg-amber-50/70 border border-amber-200/90 p-4 flex items-start gap-3">
+                  <ShieldCheck className="w-5 h-5 text-amber-700 shrink-0 mt-0.5" />
+                  <div className="space-y-1">
+                    <h3 className="text-xs sm:text-sm font-extrabold text-amber-900">
+                      {t("scanResult.verifyingNoticeTitle")}
+                    </h3>
+                    <p className="text-xs text-amber-800/90 leading-relaxed">
+                      {t("scanResult.verifyingNoticeDesc")}
+                    </p>
                   </div>
                 </div>
               );
-            })}
-          </div>
-        </Card>
+            }
+
+            return (
+              <div className="rounded-2xl bg-[#f8faf5] border border-slate-200/80 p-4 text-sm text-slate-800 leading-relaxed whitespace-pre-line">
+                {symptomsText}
+              </div>
+            );
+          })()}
+          </Card>
+        </FadeIn>
       </div>
 
       {/* ================= TREATMENT SECTION (TABS) ================= */}
-      <Card className="space-y-5 print-card">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-100">
-          <div className="flex items-center gap-2">
-            <FileText className="w-5 h-5 text-[#166534]" />
-            <h2 className="text-lg font-extrabold text-slate-900">
-              {t("scanResult.treatmentSectionTitle")}
-            </h2>
-          </div>
+      <FadeIn delay={160}>
+        <Card className="space-y-5 print-card">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-100">
+            <div className="flex items-center gap-2.5">
+              <FileText className="w-6 h-6 text-[#166534] shrink-0" />
+              <h2 className="text-lg font-extrabold text-slate-900">
+                {t("scanResult.treatmentSectionTitle")}
+              </h2>
+            </div>
 
-          <div
-            role="tablist"
-            className="no-print inline-flex rounded-xl bg-slate-100 p-1 text-xs font-bold"
-          >
-            {[
-              { id: "symptoms", label: t("scanResult.tabs.symptoms") },
-              { id: "treatment", label: t("scanResult.tabs.treatment") },
-              { id: "prevention", label: t("scanResult.tabs.prevention") },
-            ].map((tab) => (
-              <button
-                key={tab.id}
-                type="button"
-                role="tab"
-                aria-selected={activeTab === tab.id}
-                onClick={() => setActiveTab(tab.id)}
-                className={`px-4 py-2 rounded-lg transition-all cursor-pointer ${
-                  activeTab === tab.id
-                    ? "bg-[#166534] text-white shadow-2xs"
-                    : "text-slate-600 hover:text-slate-900"
-                }`}
-              >
-                {tab.label}
-              </button>
-            ))}
+            <div
+              role="tablist"
+              className="no-print flex flex-wrap sm:inline-flex gap-1 rounded-xl bg-slate-100 p-1 text-xs font-bold"
+            >
+              {[
+                { id: "symptoms", label: t("scanResult.tabs.symptoms") },
+                { id: "treatment", label: t("scanResult.tabs.treatment") },
+                { id: "prevention", label: t("scanResult.tabs.prevention") },
+              ].map((tab) => (
+                <button
+                  key={tab.id}
+                  type="button"
+                  role="tab"
+                  aria-selected={activeTab === tab.id}
+                  onClick={() => setActiveTab(tab.id)}
+                  className={`btn-interactive flex-1 sm:flex-initial min-h-[48px] h-auto px-4 py-2.5 rounded-lg leading-[1.7] whitespace-normal break-words transition-all cursor-pointer ${
+                    activeTab === tab.id
+                      ? "bg-[#166534] text-white shadow-2xs"
+                      : "text-slate-600 hover:text-slate-900"
+                  }`}
+                >
+                  {tab.label}
+                </button>
+              ))}
+            </div>
           </div>
-        </div>
 
         {/* Treatment Content or Neat "Information Being Verified" Notice */}
         {(showVerifyingCard || treatment?.is_verified === false) && (
@@ -610,7 +624,7 @@ export default function ScanResult() {
 
         {/* API Disclaimer Box */}
         <div className="rounded-xl bg-slate-50 border border-slate-200 p-4 flex items-start gap-3 text-xs text-slate-600">
-          <AlertTriangle className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
+          <AlertTriangle className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
           <div>
             <span className="font-bold text-slate-800">
               {t("scanResult.disclaimerTitle")}:{" "}
@@ -621,23 +635,24 @@ export default function ScanResult() {
             </span>
           </div>
         </div>
-      </Card>
+        </Card>
+      </FadeIn>
 
       {/* ================= BOTTOM ACTION BUTTONS ================= */}
       <div className="no-print flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 pt-2">
-        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
-          <Link to="/farmer/scan">
-            <Button variant="primary" size="lg" icon={Camera} fullWidth>
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full sm:w-auto">
+          <Link to="/farmer/scan" className="w-full sm:w-auto">
+            <Button variant="primary" size="lg" icon={Camera} className="w-full sm:w-auto">
               {t("scanResult.actions.scanAnother")}
             </Button>
           </Link>
 
-          <Link to={`/farmer/assistant?diagnosis=${diagnosis.id || id}`}>
+          <Link to={`/farmer/assistant?diagnosis=${diagnosis.id || id}`} className="w-full sm:w-auto">
             <Button
               variant="secondary"
               size="lg"
-              icon={Bot}
-              fullWidth
+              icon={MessageCircle}
+              className="w-full sm:w-auto"
             >
               {t("scanResult.actions.askAiAssistant")}
             </Button>
@@ -649,6 +664,7 @@ export default function ScanResult() {
           size="lg"
           icon={Printer}
           onClick={() => window.print()}
+          className="w-full sm:w-auto"
         >
           {t("scanResult.actions.downloadReport")}
         </Button>

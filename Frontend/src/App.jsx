@@ -8,8 +8,11 @@ import DashboardLayout from "./layouts/DashboardLayout";
 import ProtectedRoute from "./routes/ProtectedRoute";
 import RoleRoute from "./routes/RoleRoute";
 import Landing from "./pages/Landing";
+import About from "./pages/About";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
+import ForgotPassword from "./pages/ForgotPassword";
+import ResetPassword from "./pages/ResetPassword";
 import FarmerDashboard from "./pages/farmer/FarmerDashboard";
 import NewScan from "./pages/farmer/NewScan";
 import ScanResult from "./pages/farmer/ScanResult";
@@ -55,12 +58,15 @@ export default function App() {
               {/* Public Layout Routes */}
             <Route element={<PublicLayout />}>
               <Route path="/" element={<Landing />} />
+              <Route path="/about" element={<About />} />
               <Route path="*" element={<NotFound />} />
             </Route>
 
             {/* Split-Screen Auth Routes */}
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
+            <Route path="/reset-password" element={<ResetPassword />} />
 
             {/* Protected Role-Based Dashboard Routes */}
             <Route

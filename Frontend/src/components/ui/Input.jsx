@@ -34,7 +34,7 @@ export default function Input({
       <div className="relative">
         {Icon && (
           <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-400">
-            <Icon className="w-4 h-4" aria-hidden="true" />
+            <Icon className="w-5 h-5" aria-hidden="true" />
           </div>
         )}
 
@@ -43,9 +43,9 @@ export default function Input({
           type={resolvedType}
           aria-invalid={Boolean(error)}
           aria-describedby={error ? `${inputId}-error` : undefined}
-          className={`w-full rounded-xl bg-white px-4 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 border transition-all duration-150 focus:outline-none focus:ring-2 ${
-            Icon ? "pl-10" : ""
-          } ${isPassword ? "pr-11" : ""} ${
+          className={`w-full min-h-[48px] rounded-xl bg-white px-4 py-2.5 text-base text-slate-900 placeholder:text-slate-400 border transition-all duration-150 focus:outline-none focus:ring-2 ${
+            Icon ? "pl-11" : ""
+          } ${isPassword ? "pr-12" : ""} ${
             error
               ? "border-[#dc2626] focus:border-[#dc2626] focus:ring-[#dc2626]/20 bg-red-50/20"
               : "border-slate-200 hover:border-slate-300 focus:border-[#166534] focus:ring-[#166534]/20"
@@ -57,13 +57,13 @@ export default function Input({
           <button
             type="button"
             onClick={() => setShowPassword((prev) => !prev)}
-            className="absolute inset-y-0 right-0 flex items-center pr-3.5 text-slate-400 hover:text-slate-600 focus:outline-none cursor-pointer"
+            className="btn-interactive absolute inset-y-0 right-0 flex items-center pr-3.5 text-slate-400 hover:text-slate-600 focus:outline-none cursor-pointer"
             aria-label={showPassword ? "Hide password" : "Show password"}
           >
             {showPassword ? (
-              <EyeOff className="w-4 h-4" aria-hidden="true" />
+              <EyeOff className="w-5 h-5" aria-hidden="true" />
             ) : (
-              <Eye className="w-4 h-4" aria-hidden="true" />
+              <Eye className="w-5 h-5" aria-hidden="true" />
             )}
           </button>
         )}

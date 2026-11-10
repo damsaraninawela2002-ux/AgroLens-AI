@@ -21,11 +21,11 @@ export default function Badge({
 
   return (
     <span
-      className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold border ${
+      className={`inline-flex items-center gap-2 px-3 py-1.5 h-auto rounded-full text-xs font-semibold leading-[1.7] whitespace-normal break-words border ${
         variants[variant] || variants.success
       } ${className}`}
     >
-      {Icon && <Icon className="w-3.5 h-3.5 shrink-0" aria-hidden="true" />}
+      {Icon && <Icon className="w-5 h-5 shrink-0" aria-hidden="true" />}
       <span>{children}</span>
     </span>
   );

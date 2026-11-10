@@ -54,6 +54,27 @@ export async function logoutUser() {
 }
 
 /**
+ * Request a password reset email link.
+ * Matches Backend POST /api/auth/forgot-password.
+ */
+export async function forgotPassword(email) {
+  const response = await api.post("/api/auth/forgot-password", { email });
+  return response.data;
+}
+
+/**
+ * Reset password using the one-time token from email.
+ * Matches Backend POST /api/auth/reset-password.
+ */
+export async function resetPassword({ token, new_password }) {
+  const response = await api.post("/api/auth/reset-password", {
+    token,
+    new_password,
+  });
+  return response.data;
+}
+
+/**
  * Fetch the currently authenticated user's profile.
  * Matches Backend GET /api/auth/me (-> UserResponse).
  */

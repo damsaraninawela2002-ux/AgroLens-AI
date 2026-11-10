@@ -143,3 +143,26 @@ class TokenResponse(BaseModel):
     access_token: str
     token_type: str = "bearer"
     user: UserResponse
+
+
+class ForgotPasswordRequest(BaseModel):
+    """Schema for requesting a password reset link."""
+
+    email: EmailStr = Field(..., examples=["kasun@example.com"])
+
+    @field_validator("email")
+    @classmethod
+    def normalize_email(cls, v: EmailStr) -> str:
+        return str(v).strip().lower()
+
+
+class ResetPasswordRequest(BaseModel):
+    """Schema for resetting a password with a one-time token."""
+
+    token: str = Field(..., min_length=1)
+    new_password: str = Field(
+        ...,
+        min_length=8,
+        max_length=128,
+        description="New password meeting registration policy rules",
+    )

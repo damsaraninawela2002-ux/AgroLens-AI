@@ -8,6 +8,7 @@ export default function ImageCompareViewer({
   imageUrl,
   originalUrl,
   heatmapUrl,
+  isFarmer = false,
   className = "",
 }) {
   const { t } = useLanguage();
@@ -15,18 +16,31 @@ export default function ImageCompareViewer({
   const [sliderPosition, setSliderPosition] = useState(50);
   const resolvedImageUrl = imageUrl || originalUrl;
 
+  const titleText = isFarmer
+    ? t("scanResult.farmerVisualComparisonTitle")
+    : t("scanResult.visualComparisonTitle");
+  const heatmapLabel = isFarmer
+    ? t("scanResult.farmerHeatmapImageLabel")
+    : t("scanResult.heatmapImageLabel");
+  const infoTitle = isFarmer
+    ? t("scanResult.farmerWhatIsHeatmapTitle")
+    : t("scanResult.whatIsHeatmapTitle");
+  const infoDesc = isFarmer
+    ? t("scanResult.farmerWhatIsHeatmapDesc")
+    : t("scanResult.whatIsHeatmapDesc");
+
   return (
     <Card className={`space-y-5 print-card ${className}`}>
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-100">
-        <div className="flex items-center gap-2">
-          <Flame className="w-5 h-5 text-[#dc2626]" />
+        <div className="flex items-center gap-2.5">
+          <Flame className="w-6 h-6 text-[#dc2626] shrink-0" />
           <h2 className="text-lg font-extrabold text-slate-900">
-            {t("scanResult.visualComparisonTitle")}
+            {titleText}
           </h2>
         </div>
 
         {/* View Toggle Buttons */}
-        <div className="no-print inline-flex rounded-xl bg-slate-100 p-1 text-xs font-bold">
+        <div className="no-print flex flex-wrap sm:inline-flex gap-1 rounded-xl bg-slate-100 p-1 text-xs font-bold">
           {[
             { id: "sideBySide", label: t("scanResult.viewSideBySide") },
             { id: "slider", label: t("scanResult.viewSlider") },
@@ -36,7 +50,7 @@ export default function ImageCompareViewer({
               key={m.id}
               type="button"
               onClick={() => setCompareMode(m.id)}
-              className={`px-3 py-1.5 rounded-lg transition-all cursor-pointer ${
+              className={`btn-interactive flex-1 sm:flex-initial min-h-[48px] h-auto px-3 py-2 rounded-lg leading-[1.7] whitespace-normal break-words transition-all cursor-pointer ${
                 compareMode === m.id
                   ? "bg-white text-[#166534] shadow-2xs"
                   : "text-slate-600 hover:text-slate-900"
@@ -67,12 +81,12 @@ export default function ImageCompareViewer({
           <div className="space-y-2">
             <p className="text-xs font-bold text-[#dc2626] flex items-center gap-1.5">
               <Flame className="w-3.5 h-3.5" />
-              <span>{t("scanResult.heatmapImageLabel")}</span>
+              <span>{heatmapLabel}</span>
             </p>
             <div className="rounded-2xl overflow-hidden border border-slate-200 bg-slate-950 aspect-square flex items-center justify-center">
               <img
                 src={getImageUrl(heatmapUrl)}
-                alt={t("scanResult.heatmapImageLabel")}
+                alt={heatmapLabel}
                 className="w-full h-full object-cover"
               />
             </div>
@@ -87,7 +101,7 @@ export default function ImageCompareViewer({
             {/* Base Layer: Grad-CAM Heatmap */}
             <img
               src={getImageUrl(heatmapUrl)}
-              alt={t("scanResult.heatmapImageLabel")}
+              alt={heatmapLabel}
               className="w-full h-full object-cover"
             />
 
@@ -130,7 +144,7 @@ export default function ImageCompareViewer({
               className="flex-1 accent-[#166534] cursor-pointer"
             />
             <span className="text-xs font-bold text-[#dc2626]">
-              {t("scanResult.heatmapImageLabel")}
+              {heatmapLabel}
             </span>
           </div>
         </div>
@@ -141,7 +155,7 @@ export default function ImageCompareViewer({
         <div className="rounded-2xl overflow-hidden border border-slate-200 bg-slate-950 aspect-square max-h-[380px] mx-auto flex items-center justify-center">
           <img
             src={getImageUrl(heatmapUrl)}
-            alt={t("scanResult.heatmapImageLabel")}
+            alt={heatmapLabel}
             className="w-full h-full object-cover"
           />
         </div>
@@ -152,10 +166,10 @@ export default function ImageCompareViewer({
         <Info className="w-5 h-5 text-[#166534] shrink-0 mt-0.5" />
         <div className="space-y-1">
           <h4 className="text-xs sm:text-sm font-bold text-slate-900">
-            {t("scanResult.whatIsHeatmapTitle")}
+            {infoTitle}
           </h4>
           <p className="text-xs text-slate-600 leading-relaxed">
-            {t("scanResult.whatIsHeatmapDesc")}
+            {infoDesc}
           </p>
         </div>
       </div>

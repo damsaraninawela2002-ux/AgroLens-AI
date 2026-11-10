@@ -38,26 +38,36 @@
     "healthy": "Healthy Leaf",
     "diseased": "Disease Detected"
   },
+  "farmerStatus": {
+    "auto": "Clear result",
+    "pending_review": "Sent to Agricultural Officer to check",
+    "confirmed": "Confirmed by officer",
+    "corrected": "Corrected by officer",
+    "healthy": "Healthy Leaf",
+    "diseased": "Disease Detected"
+  },
   "hero": {
     "badge": "AI-Powered Crop Protection for Sri Lanka",
-    "title": "Detect Crop Leaf Diseases in Seconds with Explainable AI",
-    "subtitle": "Upload a photo of your Tomato, Potato, or Bell Pepper leaf to receive an instant MobileNetV2 diagnosis, Grad-CAM visual heatmap, and localized treatment guidance in Sinhala & English.",
+    "title": "Detect Crop Leaf Diseases in Seconds",
+    "subtitle": "Upload a photo of your Tomato, Potato, or Bell Pepper leaf to see diseased spots clearly and receive instant treatment advice in Sinhala & English.",
     "ctaPrimary": "Start Free Leaf Scan",
     "ctaSecondary": "See How It Works",
-    "trustNote": "Trusted workflow with Agricultural Officer verification across all 25 Sri Lankan districts",
+    "trustNote": "AI-powered crop disease detection with instant treatment advice for Sri Lankan farmers",
     "mockup": {
       "header": "Live AI Diagnostic Preview",
-      "verifiedBadge": "Grad-CAM Explainable AI",
+      "verifiedBadge": "Photo showing diseased spots",
       "cropLabel": "Crop Specimen",
-      "cropValue": "Tomato (Solanum lycopersicum)",
+      "cropValue": "Tomato",
+      "healthyArea": "Healthy area",
+      "diseasedArea": "Diseased area",
       "detectedLabel": "Detected Condition",
       "detectedDisease": "Tomato Early Blight",
       "detectedDiseaseSi": "තක්කාලි මුල් අංගමාරය",
-      "confidenceLabel": "AI Confidence Score",
-      "heatmapTitle": "Grad-CAM Activation Heatmap",
-      "heatmapCaption": "Highlighted red-amber zones show exact fungal lesion patterns used by MobileNetV2",
+      "confidenceLabel": "Result clarity",
+      "heatmapTitle": "Photo showing diseased spots",
+      "heatmapCaption": "Highlighted red and yellow areas show the diseased spots on the leaf",
       "statusLabel": "Verification Status",
-      "statusValue": "Auto-Verified (94.2% > 70% threshold)",
+      "statusValue": "Clear result",
       "adviceTitle": "Recommended Action",
       "adviceText": "Remove infected lower leaves immediately and apply copper-based fungicide according to DOA guidelines."
     }
@@ -65,27 +75,27 @@
   "stats": {
     "cropsLabel": "Supported Crops",
     "cropsValue": "Tomato, Potato & Pepper",
-    "classesLabel": "Disease Classes",
-    "classesValue": "15 Trained Classes",
+    "classesLabel": "Supported Diseases",
+    "classesValue": "12 diseases and healthy leaves",
     "languagesLabel": "Bilingual Advisory",
     "languagesValue": "Sinhala & English",
-    "verificationLabel": "Expert Loop",
+    "verificationLabel": "Expert Help",
     "verificationValue": "Officer Verified"
   },
   "features": {
     "sectionBadge": "Platform Capabilities",
     "title": "Built for Field Accuracy & Agronomic Trust",
-    "subtitle": "Combining deep learning computer vision with expert human-in-the-loop verification for Sri Lankan agriculture.",
+    "subtitle": "Fast leaf disease detection with Agricultural Officer support for Sri Lankan agriculture.",
     "comingSoon": "Coming soon",
     "liveBadge": "Available now",
     "items": {
       "detection": {
         "title": "AI Leaf Disease Detection",
-        "desc": "Fine-tuned MobileNetV2 classifier trained on 15 classes of Tomato, Potato, and Bell Pepper leaves with 94% test accuracy."
+        "desc": "Detects 12 diseases and healthy leaves of Tomato, Potato, and Bell Pepper in seconds."
       },
       "gradcam": {
-        "title": "Explainable AI Heatmaps",
-        "desc": "Grad-CAM visual overlays highlight the exact infected regions on the leaf so farmers and officers can trust every prediction."
+        "title": "Photo showing diseased spots",
+        "desc": "Highlights the exact infected areas on the leaf in colour so farmers and officers can clearly see the problem."
       },
       "chatbot": {
         "title": "Gemini AI Advisory Chatbot",
@@ -93,7 +103,7 @@
       },
       "officer": {
         "title": "Agricultural Officer Review",
-        "desc": "Low-confidence scans (<70%) are automatically queued for district Agricultural Officers to verify and relabel for model retraining."
+        "desc": "Unclear leaf scans are automatically sent to district Agricultural Officers to check and confirm."
       },
       "outbreakMap": {
         "title": "District Outbreak Map",
@@ -107,14 +117,69 @@
   },
   "howItWorks": {
     "sectionBadge": "Simple 3-Step Workflow",
-    "title": "From Field Leaf Photo to Actionable Treatment",
+    "title": "How it works",
     "subtitle": "Designed for mobile phones in the field—no technical expertise required.",
-    "step1Title": "1. Upload Leaf Photo",
+    "step1Title": "1. Take a photo of the leaf",
     "step1Desc": "Snap a clear photo of an affected Tomato, Potato, or Bell Pepper leaf using your phone camera or upload from your gallery.",
-    "step2Title": "2. Instant AI & Grad-CAM Analysis",
-    "step2Desc": "Our MobileNetV2 model identifies the disease in seconds and generates a Grad-CAM heatmap pinpointing the lesion areas.",
-    "step3Title": "3. Get Bilingual Treatment Advice",
-    "step3Desc": "Receive symptoms, treatment steps, and prevention tips in Sinhala or English—backed by Agricultural Officer verification."
+    "step2Title": "2. AI checks the leaf for disease",
+    "step2Desc": "AI checks your leaf photo in seconds and shows the diseased spots on the leaf in colour.",
+    "step3Title": "3. Get treatment advice",
+    "step3Desc": "Receive symptoms, treatment steps, and prevention tips in Sinhala or English—backed by Agricultural Officer support."
+  },
+  "farmerBenefits": {
+    "sectionBadge": "For Farmers",
+    "titlePrefix": "Built for",
+    "titleAccent": "Sri Lankan farmers",
+    "subtitle": "Simple, fast, and practical tools to help you protect your Tomato, Potato, and Bell Pepper crops.",
+    "fact1": "Detects 12 diseases and healthy leaves in seconds",
+    "fact2": "Photo showing diseased spots in colour on the leaf",
+    "fact3": "Unclear results are sent to an Agricultural Officer to check",
+    "fact4": "Works in Sinhala and English on your mobile phone",
+    "platformLabel": "For Farmers",
+    "cards": {
+      "phone": {
+        "label": "EASY TO USE",
+        "title": "Use easily from your phone",
+        "desc": "Works in Sinhala and English",
+        "tag1": "Mobile",
+        "tag2": "Simple"
+      },
+      "advice": {
+        "label": "ADVICE",
+        "title": "Ask questions in Sinhala",
+        "desc": "AI farming assistant available any time",
+        "tag1": "Sinhala",
+        "tag2": "24/7"
+      },
+      "visual": {
+        "label": "SEE THE PROBLEM",
+        "title": "See the diseased spots",
+        "desc": "Diseased areas of the leaf are shown in colour",
+        "tag1": "Clear",
+        "tag2": "Visual"
+      },
+      "fast": {
+        "label": "FAST RESULT",
+        "title": "Find the disease in seconds",
+        "desc": "12 diseases and healthy leaves for Tomato, Potato and Bell Pepper",
+        "tag1": "Fast",
+        "tag2": "3 crops"
+      },
+      "officer": {
+        "label": "EXPERT HELP",
+        "title": "Agricultural Officer support",
+        "desc": "Unclear results are checked by an officer",
+        "tag1": "Officer",
+        "tag2": "Trusted"
+      },
+      "records": {
+        "label": "YOUR RECORDS",
+        "title": "Your past scans are saved",
+        "desc": "View them again any time",
+        "tag1": "History",
+        "tag2": "Safe"
+      }
+    }
   },
   "techStack": {
     "sectionBadge": "Architecture & Stack",
@@ -150,23 +215,32 @@
   },
   "roles": {
     "sectionBadge": "Unified Ecosystem",
-    "title": "Tailored Workspaces for Every Stakeholder",
-    "subtitle": "Three dedicated portals connecting field farmers, government agricultural officers, and platform administrators.",
+    "title": "Built for Farmers & Agricultural Officers",
+    "subtitle": "Connecting field farmers and government agricultural officers with simple, helpful tools.",
     "farmer": {
       "badge": "Field Portal",
       "title": "Farmer",
-      "desc": "Upload crop leaf photos on mobile, view Grad-CAM heatmaps, read Sinhala/English treatment guides, and track field scan history.",
-      "point1": "Instant leaf disease diagnosis & confidence score",
+      "desc": "Upload crop leaf photos on mobile, see the diseased spots on the leaf, read Sinhala/English treatment guides, and view your past scans.",
+      "point1": "Instant leaf disease detection & clear result",
       "point2": "Bilingual treatment & prevention guidance",
       "point3": "Complete historical log of farm diagnoses"
     },
     "officer": {
       "badge": "Expert Verification",
       "title": "Agricultural Officer",
-      "desc": "Review uncertain AI diagnoses in your assigned district, provide expert corrections, and monitor local disease trends.",
-      "point1": "Review queue for scans with <70% confidence",
-      "point2": "Approve or correct labels with agronomy notes",
-      "point3": "Feed verified samples into the retraining pipeline"
+      "desc": "Review unclear leaf diagnoses in your assigned district, provide expert corrections, and monitor local disease trends.",
+      "point1": "Checks unclear leaf scans for farmers",
+      "point2": "Confirm or correct disease with helpful notes",
+      "point3": "Helps farmers get accurate treatment advice"
+    },
+    "benefits": {
+      "badge": "For Farmers",
+      "title": "Benefits for farmers",
+      "desc": "Everything you need to check crop leaf diseases quickly in the field.",
+      "point1": "Free to use",
+      "point2": "Works in Sinhala",
+      "point3": "Use from your phone",
+      "point4": "Help from Agricultural Officers"
     },
     "admin": {
       "badge": "System Governance",
@@ -184,23 +258,24 @@
     "secondaryBtn": "Sign In to Portal"
   },
   "footer": {
-    "tagline": "AI-powered crop leaf disease detection, Grad-CAM explainability, and bilingual farmer advisory platform built for Sri Lankan agriculture.",
+    "tagline": "AI-powered crop leaf disease detection and bilingual farmer advisory platform built for Sri Lankan agriculture.",
     "platformTitle": "Platform",
     "cropsTitle": "Supported Crops",
-    "cropTomato": "Tomato (10 classes)",
-    "cropPotato": "Potato (3 classes)",
-    "cropPepper": "Pepper Bell (2 classes)",
+    "cropTomato": "Tomato – 9 diseases + healthy",
+    "cropPotato": "Potato – 2 diseases + healthy",
+    "cropPepper": "Bell Pepper – 1 disease + healthy",
     "copyright": "© 2026 AgroLens AI, built by Damsarini Nawela",
-    "githubLabel": "GitHub Repository"
+    "githubLabel": "GitHub Repository",
+    "helplineBadge": "Govi Sahana Sevaya – 1920"
   },
   "auth": {
-    "panelTagline": "Empowering Sri Lankan agriculture with explainable computer vision and bilingual agronomic intelligence.",
-    "benefit1Title": "94% Test Accuracy on Field Crops",
-    "benefit1Desc": "Trained on 15 disease and healthy classes across Tomato, Potato, and Bell Pepper.",
-    "benefit2Title": "Grad-CAM Visual Explainability",
-    "benefit2Desc": "See the exact leaf regions driving every AI diagnosis with transparent heatmap overlays.",
-    "benefit3Title": "Human-in-the-Loop Officer Review",
-    "benefit3Desc": "Uncertain predictions are routed to district Agricultural Officers for expert verification.",
+    "panelTagline": "Helping Sri Lankan farmers detect crop leaf diseases early with instant advice in Sinhala and English.",
+    "benefit1Title": "12 diseases and healthy leaves",
+    "benefit1Desc": "Supports Tomato, Potato, and Bell Pepper leaves with fast results.",
+    "benefit2Title": "Photo showing diseased spots",
+    "benefit2Desc": "See the exact diseased areas on the leaf highlighted in colour.",
+    "benefit3Title": "Agricultural Officer Support",
+    "benefit3Desc": "Unclear leaf scans are sent to district Agricultural Officers to check for you.",
     "login": {
       "title": "Welcome back",
       "subtitle": "Sign in to your AgroLens AI workspace",
@@ -209,6 +284,7 @@
       "passwordLabel": "Password",
       "passwordPlaceholder": "Enter your password",
       "rememberMe": "Remember me on this device",
+      "forgotPasswordLink": "Forgot password?",
       "submitBtn": "Sign In",
       "submitting": "Signing in...",
       "noAccount": "Don't have an account?",
@@ -262,6 +338,47 @@
         "roleRequired": "Please select either Farmer or Agricultural Officer",
         "districtRequired": "Please select your district"
       }
+    },
+    "forgotPassword": {
+      "title": "Forgot password?",
+      "subtitle": "Enter your email address and we will send you a one-time link to reset your password.",
+      "emailLabel": "Email address",
+      "emailPlaceholder": "you@example.com",
+      "submitBtn": "Send reset link",
+      "submitting": "Sending reset link...",
+      "backToLogin": "Back to login",
+      "successTitle": "Check your email",
+      "successMessage": "If this email is registered, a password reset link has been sent.",
+      "expiryNote": "The reset link is valid for 15 minutes.",
+      "errors": {
+        "emailRequired": "Email address is required",
+        "emailInvalid": "Please enter a valid email address",
+        "rateLimited": "Too many password reset requests. Please try again in 15 minutes.",
+        "requestFailed": "Could not send reset link. Please try again."
+      }
+    },
+    "resetPassword": {
+      "title": "Reset your password",
+      "subtitle": "Choose a strong new password for your AgroLens AI account.",
+      "newPasswordLabel": "New password",
+      "newPasswordPlaceholder": "At least 8 characters",
+      "confirmPasswordLabel": "Confirm new password",
+      "confirmPasswordPlaceholder": "Re-enter your new password",
+      "submitBtn": "Reset password",
+      "submitting": "Resetting password...",
+      "backToLogin": "Back to login",
+      "requestNewLink": "Request a new link",
+      "invalidLinkTitle": "Invalid or expired reset link",
+      "invalidLinkMessage": "This password reset link is missing, invalid, or has expired. Please request a new reset link.",
+      "successTitle": "Password changed successfully",
+      "successMessage": "Your password has been updated. Redirecting you to login in 3 seconds...",
+      "errors": {
+        "passwordRequired": "New password is required",
+        "passwordLength": "Password must be at least 8 characters",
+        "passwordComplexity": "Password must contain at least one letter and one number",
+        "passwordMismatch": "Passwords do not match",
+        "invalidOrExpired": "Invalid or expired password reset link. Please request a new one."
+      }
     }
   },
   "passwordStrength": {
@@ -282,22 +399,22 @@
     "officerTitle": "Agricultural Officer Review Workspace",
     "adminTitle": "Administrator Control Center",
     "comingSoonBadge": "Workspace Ready",
-    "placeholderDesc": "Monitor your crop health diagnostics, Grad-CAM insights, and recent leaf scans.",
+    "placeholderDesc": "Check your crop leaf health, view diseased spots, and see your recent leaf scans.",
     "scanCtaTitle": "Detect Crop Leaf Disease Instantly",
-    "scanCtaDesc": "Upload or snap a photo of a Tomato, Potato, or Bell Pepper leaf to run MobileNetV2 inference and Grad-CAM lesion analysis.",
+    "scanCtaDesc": "Upload or snap a photo of a Tomato, Potato, or Bell Pepper leaf to check for disease and get instant treatment advice.",
     "scanCtaButton": "Scan a Leaf Now",
     "stats": {
       "totalScans": "Total Scans",
       "healthyResults": "Healthy Leaves",
       "diseasesDetected": "Diseases Detected",
-      "pendingReview": "Pending Officer Review"
+      "pendingReview": "Sent to Officer"
     },
     "recentScans": {
       "title": "Recent Leaf Scans",
       "subtitle": "Your last 5 crop diagnoses",
       "viewAll": "View All History",
       "viewDetails": "View Result",
-      "confidence": "Confidence"
+      "confidence": "Result clarity"
     },
     "chart": {
       "title": "Scans by Condition",
@@ -348,10 +465,10 @@
       "tip4Desc": "Make sure spots, yellowing, or lesions on the leaf blade are sharp and not blurry."
     },
     "progress": {
-      "title": "Processing Your Leaf Specimen...",
-      "step1": "Uploading high-resolution leaf photo...",
-      "step2": "Running MobileNetV2 disease classification...",
-      "step3": "Generating Grad-CAM explainability heatmap..."
+      "title": "Checking Your Leaf Photo...",
+      "step1": "Uploading leaf photo...",
+      "step2": "Checking the leaf for disease...",
+      "step3": "Highlighting diseased spots on the leaf..."
     },
     "errors": {
       "invalidType": "Invalid file format. Please select a JPG, JPEG, or PNG image.",
@@ -360,7 +477,7 @@
       "noFile": "Please select a leaf photo before analyzing.",
       "uploadFailed": "Failed to analyze leaf image. Please try again."
     },
-    "successToast": "Leaf diagnosis and Grad-CAM heatmap ready!"
+    "successToast": "Leaf check complete!"
   },
   "scanResult": {
     "pageTitle": "Diagnosis Result",
@@ -375,29 +492,37 @@
     },
     "scannedOn": "Scanned on",
     "districtLabel": "District",
-    "confidenceTitle": "AI Confidence Score",
-    "highConfidence": "High Confidence (≥85%)",
-    "moderateConfidence": "Moderate Confidence (70–84%)",
-    "lowConfidence": "Low Confidence (<70%)",
-    "pendingReviewNoticeTitle": "Queued for Agricultural Officer Verification",
-    "pendingReviewNoticeDesc": "Because the AI confidence score is below 70%, this scan has been automatically marked as Pending Review. A district Agricultural Officer will inspect your leaf photo and confirm or correct the diagnosis.",
+    "resultClarity": "Result clarity",
+    "confidenceTitle": "Result clarity",
+    "highConfidence": "Very clear result",
+    "moderateConfidence": "Clear result",
+    "lowConfidence": "Unclear result – sent to Officer",
+    "pendingReviewNoticeTitle": "Sent to Agricultural Officer to check",
+    "pendingReviewNoticeDesc": "Because this leaf photo is not completely clear, it has been sent to a district Agricultural Officer to inspect your leaf photo and confirm or correct the diagnosis.",
     "officerReviewTitle": "Officer Review",
     "officerConfirmedLabel": "Final Diagnosis",
     "officerNotesLabel": "Officer Notes",
     "officerNameLabel": "Reviewed by",
     "officerDateLabel": "Reviewed on",
-    "aiPredictionWasLabel": "AI prediction",
+    "aiPredictionWasLabel": "Initial AI result",
     "visualComparisonTitle": "Visual & Grad-CAM Explainability",
+    "farmerVisualComparisonTitle": "Photo showing diseased spots",
     "viewSideBySide": "Side-by-Side",
     "viewSlider": "Interactive Slider",
-    "viewHeatmapOnly": "Heatmap Only",
+    "viewHeatmapOnly": "Highlighted Spots Only",
     "originalImageLabel": "Original Leaf Photo",
     "heatmapImageLabel": "Grad-CAM Activation Overlay",
+    "farmerHeatmapImageLabel": "Photo showing diseased spots",
     "whatIsHeatmapTitle": "What is this Grad-CAM heatmap?",
     "whatIsHeatmapDesc": "Grad-CAM (Gradient-weighted Class Activation Mapping) highlights the exact regions of the leaf that our MobileNetV2 neural network focused on. Warm red and yellow areas indicate strong disease lesion activation, while cool blue areas had minimal influence.",
+    "farmerWhatIsHeatmapTitle": "What do the colours on the leaf mean?",
+    "farmerWhatIsHeatmapDesc": "Red and yellow areas show the diseased spots on the leaf that were used to find the problem. Blue and green areas are healthy parts of the leaf.",
+    "symptomsCardTitle": "Symptoms of this disease",
+    "symptomsCardSubtitle": "Look for these signs on your crop leaves",
+    "healthyLeafSymptomsText": "This leaf looks healthy and shows no signs of disease.",
     "top3Title": "Top 3 Model Predictions",
     "top3Subtitle": "Probability distribution across the top matching classes",
-    "treatmentSectionTitle": "Agronomic Advisory & Management",
+    "treatmentSectionTitle": "Treatment & Prevention Advice",
     "tabs": {
       "symptoms": "Symptoms",
       "treatment": "Treatment",
@@ -409,7 +534,7 @@
     "actions": {
       "scanAnother": "Scan Another Leaf",
       "askAiAssistant": "Ask AI Assistant",
-      "comingSoonTooltip": "Gemini AI Advisory Chatbot coming soon",
+      "comingSoonTooltip": "AI Advisory Chatbot",
       "downloadReport": "Download Report"
     }
   },
@@ -420,15 +545,15 @@
     "searchPlaceholder": "Search by crop or disease name...",
     "filters": {
       "all": "All Scans",
-      "auto": "Auto-Verified",
-      "pending_review": "Pending review",
+      "auto": "Clear result",
+      "pending_review": "Sent to Agricultural Officer to check",
       "confirmed": "Confirmed by officer",
       "corrected": "Corrected by officer"
     },
     "table": {
       "leaf": "Leaf",
       "disease": "Detected Condition",
-      "confidence": "Confidence",
+      "confidence": "Result clarity",
       "status": "Status",
       "date": "Date",
       "action": "Action",

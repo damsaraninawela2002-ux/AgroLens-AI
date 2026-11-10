@@ -89,7 +89,7 @@ export default function Select({
         aria-expanded={isOpen}
         aria-labelledby={`${selectId}-label`}
         onClick={() => setIsOpen((prev) => !prev)}
-        className={`w-full flex items-center justify-between rounded-xl bg-white px-3.5 py-2.5 text-sm text-left border transition-all duration-150 focus:outline-none focus:ring-2 cursor-pointer ${
+        className={`btn-interactive w-full min-h-[48px] h-auto flex items-center justify-between gap-2 rounded-xl bg-white px-3.5 py-2.5 text-base leading-[1.7] whitespace-normal break-words text-left border transition-all duration-150 focus:outline-none focus:ring-2 cursor-pointer ${
           error
             ? "border-[#dc2626] focus:border-[#dc2626] focus:ring-[#dc2626]/20"
             : isOpen
@@ -97,12 +97,12 @@ export default function Select({
             : "border-slate-200 hover:border-slate-300 focus:border-[#166534] focus:ring-[#166534]/20"
         }`}
       >
-        <span className="flex items-center gap-2.5 truncate">
+        <span className="flex items-center gap-2.5 min-w-0">
           {Icon && (
-            <Icon className="w-4 h-4 text-slate-400 shrink-0" aria-hidden="true" />
+            <Icon className="w-5 h-5 text-slate-400 shrink-0" aria-hidden="true" />
           )}
           {selectedOption ? (
-            <span className="text-slate-900 font-medium truncate">
+            <span className="text-slate-900 font-medium break-words">
               {selectedOption.label}
               {selectedOption.subLabel ? (
                 <span className="text-slate-500 font-normal ml-1.5">
@@ -116,7 +116,7 @@ export default function Select({
         </span>
 
         <ChevronDown
-          className={`w-4 h-4 text-slate-400 shrink-0 transition-transform duration-150 ${
+          className={`w-5 h-5 text-slate-400 shrink-0 transition-transform duration-150 ${
             isOpen ? "rotate-180 text-[#166534]" : ""
           }`}
           aria-hidden="true"
@@ -133,7 +133,7 @@ export default function Select({
           <div className="p-2 border-b border-slate-100 bg-slate-50/70">
             <div className="relative">
               <Search
-                className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2"
+                className="w-5 h-5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2"
                 aria-hidden="true"
               />
               <input
@@ -142,7 +142,7 @@ export default function Select({
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 placeholder={searchPlaceholder}
-                className="w-full rounded-lg bg-white pl-9 pr-3 py-1.5 text-xs text-slate-800 placeholder:text-slate-400 border border-slate-200 focus:outline-none focus:border-[#166534]"
+                className="w-full min-h-[48px] rounded-lg bg-white pl-10 pr-3 py-2 text-base text-slate-800 placeholder:text-slate-400 border border-slate-200 focus:outline-none focus:border-[#166534]"
               />
             </div>
           </div>
@@ -163,13 +163,13 @@ export default function Select({
                     role="option"
                     aria-selected={isSelected}
                     onClick={() => handleSelect(opt.value)}
-                    className={`w-full flex items-center justify-between px-3 py-2 rounded-lg text-sm text-left transition-colors cursor-pointer ${
+                    className={`w-full min-h-[48px] flex items-center justify-between gap-2 px-3 py-2.5 rounded-lg text-sm leading-[1.7] whitespace-normal break-words text-left transition-colors cursor-pointer ${
                       isSelected
                         ? "bg-emerald-50 text-[#166534] font-semibold"
                         : "text-slate-700 hover:bg-slate-50"
                     }`}
                   >
-                    <span className="truncate">
+                    <span className="break-words">
                       {opt.label}
                       {opt.subLabel ? (
                         <span className="text-slate-500 font-normal ml-1.5 text-xs">
@@ -179,7 +179,7 @@ export default function Select({
                     </span>
                     {isSelected && (
                       <Check
-                        className="w-4 h-4 text-[#166534] shrink-0"
+                        className="w-5 h-5 text-[#166534] shrink-0"
                         aria-hidden="true"
                       />
                     )}
