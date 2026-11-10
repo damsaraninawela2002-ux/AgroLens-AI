@@ -475,7 +475,7 @@ HNDIT student, Advanced Technological Institute – Rathnapura
 [![Portfolio](https://img.shields.io/badge/Portfolio-16A34A?style=flat&logo=vercel&logoColor=white)](https://frontend-1-henna.vercel.app/)
 
 ---
-\
+
 
 
 ## ⚠️ Disclaimer
@@ -484,7 +484,7 @@ This project is built for educational and portfolio purposes using the public **
 
 <div align="center">
 
-⭐ If you find this project useful, please give it a star!
+
 
 </div>
 
