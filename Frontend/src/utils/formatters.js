@@ -51,7 +51,7 @@ export function extractErrorMessage(
   }
 
   if (error.message === "Network Error") {
-    return "Cannot reach the AgroLens AI server. Please ensure the backend is running on http://localhost:8000.";
+    return `Cannot reach the AgroLens AI server. Please ensure the backend is running on ${API_BASE_URL}.`;
   }
 
   return fallback;
