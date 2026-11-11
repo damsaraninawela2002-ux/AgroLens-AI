@@ -1,8 +1,10 @@
-# Environment files (in every folder, except .env.example)
+# Environment files (in every folder, except .env.example and .env.production)
 **/.env
 **/.env.*
 **/.env.old
 !**/.env.example
+!**/.env.production
+!Frontend/.env.production
 
 # Backend
 Backend/venv/

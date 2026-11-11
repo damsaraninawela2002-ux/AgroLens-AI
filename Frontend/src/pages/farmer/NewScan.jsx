@@ -19,6 +19,7 @@ import Card from "../../components/ui/Card";
 import Button from "../../components/ui/Button";
 import Spinner from "../../components/ui/Spinner";
 import FadeIn from "../../components/common/FadeIn";
+import { INFERENCE_MODE as RAW_INFERENCE_MODE } from "../../config/api";
 import { useLanguage } from "../../context/LanguageContext";
 import {
   recordBrowserScan,
@@ -30,9 +31,7 @@ const MAX_SIZE_BYTES = 5 * 1024 * 1024; // 5MB
 const ALLOWED_MIME_TYPES = ["image/jpeg", "image/jpg", "image/png"];
 const ALLOWED_EXT_REGEX = /\.(jpe?g|png)$/i;
 
-const INFERENCE_MODE = (
-  import.meta.env.VITE_INFERENCE_MODE || "browser"
-).toLowerCase();
+const INFERENCE_MODE = (RAW_INFERENCE_MODE || "browser").toLowerCase();
 
 const CROP_OPTIONS = [
   { id: "tomato", icon: "/icons/crops/tomato.svg", labelKey: "newScan.crops.tomato", fallback: "Tomato (තක්කාලි)" },

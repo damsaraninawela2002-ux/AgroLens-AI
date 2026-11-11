@@ -56,6 +56,19 @@ export function AuthProvider({ children }) {
           setUser(profile);
         }
       } catch {
+        const existingToken = getAccessToken();
+        if (existingToken) {
+          try {
+            const profile = await fetchCurrentUser();
+            if (isMounted) {
+              setToken(existingToken);
+              setUser(profile);
+            }
+            return;
+          } catch {
+            // Fall through to clear invalid token
+          }
+        }
         setAccessToken(null);
         if (isMounted) {
           setToken(null);

@@ -4,15 +4,38 @@ import { API_URL } from "../config/api";
 export const API_BASE_URL = API_URL;
 export { API_URL };
 
+const ACCESS_TOKEN_STORAGE_KEY = "agrolens_access_token";
+
 let inMemoryAccessToken = null;
 let refreshPromise = null;
 
 export function getAccessToken() {
-  return inMemoryAccessToken;
+  if (inMemoryAccessToken) {
+    return inMemoryAccessToken;
+  }
+  try {
+    const stored = sessionStorage.getItem(ACCESS_TOKEN_STORAGE_KEY);
+    if (stored) {
+      inMemoryAccessToken = stored;
+      return stored;
+    }
+  } catch {
+    // Ignore storage read errors
+  }
+  return null;
 }
 
 export function setAccessToken(token) {
   inMemoryAccessToken = token || null;
+  try {
+    if (token) {
+      sessionStorage.setItem(ACCESS_TOKEN_STORAGE_KEY, token);
+    } else {
+      sessionStorage.removeItem(ACCESS_TOKEN_STORAGE_KEY);
+    }
+  } catch {
+    // Ignore storage write errors
+  }
 }
 
 export const getStoredToken = getAccessToken;
@@ -69,9 +92,9 @@ api.interceptors.response.use(
 
       try {
         if (!refreshPromise) {
-          refreshPromise = axios
+          refreshPromise = api
             .post(
-              `${API_URL}/api/auth/refresh`,
+              "/api/auth/refresh",
               {},
               { withCredentials: true }
             )

@@ -161,7 +161,7 @@ export default function AdminAuditLog() {
       header: t("admin.auditLog.table.ipAddress") || "IP Address",
       render: (log) => (
         <span className="font-mono text-[11px] px-2 py-0.5 rounded bg-slate-100 text-slate-600 border border-slate-200/60">
-          {log.ip_address || "127.0.0.1"}
+          {log.ip_address || "—"}
         </span>
       ),
     },
