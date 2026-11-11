@@ -1,7 +1,22 @@
-import { API_BASE_URL } from "../services/api";
+import { API_URL } from "../config/api";
+import enTranslations from "../i18n/en.json";
+import siTranslations from "../i18n/si.json";
 import { DISEASE_LABELS } from "./constants";
 
 export { SRI_LANKAN_DISTRICTS } from "./constants";
+
+function getActiveLanguage() {
+  try {
+    const saved = localStorage.getItem("agrolens_lang");
+    if (saved === "si" || saved === "en") return saved;
+  } catch {
+    // Ignore storage read errors
+  }
+  if (typeof document !== "undefined" && document.documentElement?.lang === "si") {
+    return "si";
+  }
+  return "en";
+}
 
 /**
  * Build a full image URL from a backend relative path (e.g. "/uploads/images/xyz.jpg").
@@ -16,7 +31,7 @@ export function getImageUrl(path) {
   ) {
     return path;
   }
-  const cleanBase = API_BASE_URL.replace(/\/+$/, "");
+  const cleanBase = API_URL.replace(/\/+$/, "");
   const cleanPath = path.startsWith("/") ? path : `/${path}`;
   return `${cleanBase}${cleanPath}`;
 }
@@ -50,8 +65,13 @@ export function extractErrorMessage(
     return error.message;
   }
 
-  if (error.message === "Network Error") {
-    return `Cannot reach the AgroLens AI server. Please ensure the backend is running on ${API_BASE_URL}.`;
+  if (error.message === "Network Error" || !error.response) {
+    const lang = getActiveLanguage();
+    const dict = lang === "si" ? siTranslations : enTranslations;
+    return (
+      dict?.errors?.serverUnreachable ||
+      "Server is waking up or unreachable. Please wait a minute and try again."
+    );
   }
 
   return fallback;

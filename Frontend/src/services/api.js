@@ -1,7 +1,8 @@
 import axios from "axios";
+import { API_URL } from "../config/api";
 
-export const API_BASE_URL =
-  import.meta.env.VITE_API_URL || "http://127.0.0.1:8000";
+export const API_BASE_URL = API_URL;
+export { API_URL };
 
 let inMemoryAccessToken = null;
 let refreshPromise = null;
@@ -18,7 +19,7 @@ export const getStoredToken = getAccessToken;
 export const setStoredToken = setAccessToken;
 
 const api = axios.create({
-  baseURL: API_BASE_URL,
+  baseURL: API_URL,
   withCredentials: true,
   headers: {
     "Content-Type": "application/json",
@@ -70,7 +71,7 @@ api.interceptors.response.use(
         if (!refreshPromise) {
           refreshPromise = axios
             .post(
-              `${API_BASE_URL}/api/auth/refresh`,
+              `${API_URL}/api/auth/refresh`,
               {},
               { withCredentials: true }
             )

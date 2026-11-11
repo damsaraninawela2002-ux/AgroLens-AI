@@ -14,12 +14,13 @@ import Badge from "../components/ui/Badge";
 import Button from "../components/ui/Button";
 import { useAuth } from "../context/AuthContext";
 import { useLanguage } from "../context/LanguageContext";
-import { API_BASE_URL } from "../services/api";
+import { API_URL } from "../config/api";
 import { predictLeafDisease } from "../services/authService";
 import {
   extractErrorMessage,
   formatConfidence,
   formatDiseaseKey,
+  getImageUrl,
 } from "../utils/formatters";
 
 export default function DashboardPlaceholder() {
@@ -195,7 +196,7 @@ export default function DashboardPlaceholder() {
                       Original Uploaded Leaf
                     </p>
                     <img
-                      src={`${API_BASE_URL}${scanResult.diagnosis?.image_url}`}
+                      src={getImageUrl(scanResult.diagnosis?.image_url) || `${API_URL}${scanResult.diagnosis?.image_url || ""}`}
                       alt="Uploaded leaf"
                       className="w-full h-48 object-cover rounded-xl border border-slate-200"
                     />
@@ -206,7 +207,7 @@ export default function DashboardPlaceholder() {
                       <span>Grad-CAM Explainability Heatmap</span>
                     </p>
                     <img
-                      src={`${API_BASE_URL}${scanResult.diagnosis?.heatmap_url}`}
+                      src={getImageUrl(scanResult.diagnosis?.heatmap_url) || `${API_URL}${scanResult.diagnosis?.heatmap_url || ""}`}
                       alt="Grad-CAM heatmap"
                       className="w-full h-48 object-cover rounded-xl border border-slate-200"
                     />

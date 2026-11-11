@@ -1173,5 +1173,8 @@
     "title": "Page not found",
     "subtitle": "The page you are looking for doesn't exist or has been moved.",
     "backHome": "Back to Home"
+  },
+  "errors": {
+    "serverUnreachable": "Server is waking up or unreachable. Please wait a minute and try again."
   }
 }
