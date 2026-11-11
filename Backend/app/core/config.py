@@ -36,7 +36,7 @@ class Settings:
             os.getenv("ALLOWED_ORIGINS") or "http://localhost:5173"
         ).strip()
         parsed_origins = [
-            origin.strip().rstrip("/")
+            origin.strip()
             for origin in raw_origins.split(",")
             if origin.strip()
         ]
