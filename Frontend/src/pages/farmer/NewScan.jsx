@@ -20,12 +20,19 @@ import Button from "../../components/ui/Button";
 import Spinner from "../../components/ui/Spinner";
 import FadeIn from "../../components/common/FadeIn";
 import { useLanguage } from "../../context/LanguageContext";
-import api from "../../services/api";
+import {
+  recordBrowserScan,
+  uploadLeafForPrediction,
+} from "../../services/predictService";
 import { extractErrorMessage } from "../../utils/formatters";
 
 const MAX_SIZE_BYTES = 5 * 1024 * 1024; // 5MB
 const ALLOWED_MIME_TYPES = ["image/jpeg", "image/jpg", "image/png"];
 const ALLOWED_EXT_REGEX = /\.(jpe?g|png)$/i;
+
+const INFERENCE_MODE = (
+  import.meta.env.VITE_INFERENCE_MODE || "browser"
+).toLowerCase();
 
 const CROP_OPTIONS = [
   { id: "tomato", icon: "/icons/crops/tomato.svg", labelKey: "newScan.crops.tomato", fallback: "Tomato (තක්කාලි)" },
@@ -47,6 +54,8 @@ export default function NewScan() {
   const [validationError, setValidationError] = useState("");
   const [analyzing, setAnalyzing] = useState(false);
   const [progressStep, setProgressStep] = useState(0);
+  const [isFirstTimeAiLoad, setIsFirstTimeAiLoad] = useState(false);
+  const [aiLoadPercent, setAiLoadPercent] = useState(0);
 
   // Clean up object URL on unmount or change
   useEffect(() => {
@@ -57,9 +66,9 @@ export default function NewScan() {
     };
   }, [previewUrl]);
 
-  // Animate progress steps while analyzing: 0 -> Uploading, 1 -> Analyzing, 2 -> Generating heatmap
+  // Animate progress steps in server mode
   useEffect(() => {
-    if (!analyzing) {
+    if (!analyzing || INFERENCE_MODE !== "server") {
       return;
     }
 
@@ -141,6 +150,18 @@ export default function NewScan() {
     setValidationError("");
   };
 
+  const navigateToResult = (result) => {
+    toast.success(t("newScan.successToast"));
+    const diagnosisId = result?.diagnosis?.id;
+    if (diagnosisId) {
+      navigate(`/farmer/scan/${diagnosisId}`, {
+        state: { initialData: result },
+      });
+    } else {
+      navigate("/farmer/history");
+    }
+  };
+
   const handleAnalyze = async () => {
     if (!selectedCrop) {
       setValidationError(t("newScan.errors.noCrop"));
@@ -153,28 +174,70 @@ export default function NewScan() {
 
     setValidationError("");
     setProgressStep(0);
+    setAiLoadPercent(0);
     setAnalyzing(true);
+
     try {
-      const formData = new FormData();
-      formData.append("file", file);
-      formData.append("crop", selectedCrop);
-
-      const response = await api.post("/api/predict", formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
-      const result = response.data;
-
-      toast.success(t("newScan.successToast"));
-      const diagnosisId = result?.diagnosis?.id;
-      if (diagnosisId) {
-        navigate(`/farmer/scan/${diagnosisId}`, {
-          state: { initialData: result },
-        });
-      } else {
-        navigate("/farmer/history");
+      if (INFERENCE_MODE === "server") {
+        const result = await uploadLeafForPrediction(file, selectedCrop);
+        navigateToResult(result);
+        return;
       }
+
+      // Browser inference mode (lazy-load TensorFlow.js modules only on New Scan)
+      const [
+        { isModelCached },
+        { compressImageForScan },
+        { predictLeafInBrowser },
+        { generateGradCamInBrowser },
+      ] = await Promise.all([
+        import("../../ml/modelLoader"),
+        import("../../ml/preprocess"),
+        import("../../ml/predict"),
+        import("../../ml/gradcam"),
+      ]);
+
+      const firstVisit = !isModelCached();
+      setIsFirstTimeAiLoad(firstVisit);
+
+      // 1. Resize/compress photo in browser (longest side 1024px, JPEG ~0.8)
+      const compressed = await compressImageForScan(file, 1024, 0.8);
+
+      // 2. Load model (cached in IndexedDB) and run prediction
+      const prediction = await predictLeafInBrowser(
+        compressed.imageElement,
+        selectedCrop,
+        {
+          onModelProgress: ({ isFirstLoad, fraction }) => {
+            setIsFirstTimeAiLoad(Boolean(isFirstLoad));
+            setAiLoadPercent(Math.round((fraction || 0) * 100));
+            if ((fraction || 0) >= 1) {
+              setProgressStep(1);
+            }
+          },
+        }
+      );
+
+      setProgressStep(2);
+
+      // 3. Generate Grad-CAM heatmap overlay in the browser
+      const gradcam = await generateGradCamInBrowser(
+        compressed.imageElement,
+        prediction.predictedIndex
+      );
+
+      // 4. Save scan & Grad-CAM on backend without running server-side TensorFlow
+      const result = await recordBrowserScan({
+        file: compressed.file,
+        heatmap: gradcam.file,
+        crop: selectedCrop,
+        className: prediction.className,
+        confidence: prediction.confidence,
+        top3: prediction.top3,
+        cropMatchScore: prediction.cropMatchScore,
+      });
+
+      navigateToResult(result);
     } catch (err) {
       const msg = extractErrorMessage(err, t("newScan.errors.uploadFailed"));
       setValidationError(msg);
@@ -182,6 +245,8 @@ export default function NewScan() {
     } finally {
       setAnalyzing(false);
       setProgressStep(0);
+      setIsFirstTimeAiLoad(false);
+      setAiLoadPercent(0);
     }
   };
 
@@ -208,11 +273,20 @@ export default function NewScan() {
     },
   ];
 
-  const steps = [
-    t("newScan.progress.step1"),
-    t("newScan.progress.step2"),
-    t("newScan.progress.step3"),
-  ];
+  const steps =
+    INFERENCE_MODE === "server"
+      ? [
+          t("newScan.progress.step1"),
+          t("newScan.progress.step2"),
+          t("newScan.progress.step3"),
+        ]
+      : [
+          isFirstTimeAiLoad
+            ? t("newScan.progress.preparingAiFirstTime")
+            : t("newScan.progress.checkingLeaf"),
+          t("newScan.progress.checkingLeaf"),
+          t("newScan.progress.step3"),
+        ];
 
   return (
     <div className="space-y-6">
@@ -309,78 +383,72 @@ export default function NewScan() {
             </p>
           </div>
 
+          <div className="border-t border-slate-100 pt-4 space-y-2.5">
+            <label className="flex items-center gap-2 text-sm font-extrabold text-slate-900">
+              <ImagePlus className="w-6 h-6 text-[#166534] shrink-0" />
+              <span>{t("newScan.uploadStepLabel")}</span>
+            </label>
+          </div>
+
           {!file ? (
-            <div className="space-y-4">
-              <div
-                onDragOver={handleDragOver}
-                onDragLeave={handleDragLeave}
-                onDrop={handleDrop}
-                className={`rounded-2xl border-2 border-dashed p-6 sm:p-10 text-center transition-all ${
-                  dragActive
-                    ? "border-[#166534] bg-emerald-50/80 scale-[1.01]"
-                    : "border-emerald-300/90 hover:border-[#166534] bg-[#f8faf5]"
-                }`}
-              >
-                <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-emerald-100/80 text-[#166534] flex items-center justify-center">
-                  <UploadCloud className="w-8 h-8" />
-                </div>
-
-                <h3 className="text-base sm:text-lg font-extrabold text-slate-900">
-                  {t("newScan.dropzoneTitle")}
-                </h3>
-                <p className="text-xs sm:text-sm text-slate-500 mt-1">
-                  {t("newScan.dropzoneSubtitle")}
-                </p>
-
-                <div className="mt-6 flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-3">
-                  <Button
-                    variant="primary"
-                    icon={ImagePlus}
-                    onClick={() => fileInputRef.current?.click()}
-                    className="w-full sm:w-auto"
-                  >
-                    {t("newScan.choosePhotoBtn")}
-                  </Button>
-
-                  <Button
-                    variant="secondary"
-                    icon={Camera}
-                    onClick={() => cameraInputRef.current?.click()}
-                    className="w-full sm:hidden"
-                  >
-                    {t("newScan.takePhotoBtn")}
-                  </Button>
-
-                  <Button
-                    variant="outline"
-                    icon={Camera}
-                    onClick={() => cameraInputRef.current?.click()}
-                    className="hidden sm:inline-flex"
-                  >
-                    {t("newScan.takePhotoBtn")}
-                  </Button>
-                </div>
+            /* Drag-and-Drop Zone */
+            <div
+              onDragOver={handleDragOver}
+              onDragLeave={handleDragLeave}
+              onDrop={handleDrop}
+              onClick={() => fileInputRef.current?.click()}
+              className={`rounded-2xl border-2 border-dashed p-6 sm:p-10 text-center transition-all cursor-pointer ${
+                dragActive
+                  ? "border-[#166534] bg-emerald-50/70"
+                  : "border-slate-300 hover:border-emerald-400 bg-[#f8faf5]/60 hover:bg-emerald-50/30"
+              }`}
+            >
+              <div className="w-16 h-16 rounded-2xl bg-emerald-100 text-[#166534] flex items-center justify-center mx-auto mb-4 shadow-xs">
+                <UploadCloud className="w-8 h-8" />
               </div>
 
-              <Button
-                variant="primary"
-                size="lg"
-                fullWidth
-                icon={Sparkles}
-                disabled={!selectedCrop || !file || analyzing}
-                onClick={handleAnalyze}
+              <h3 className="text-base sm:text-lg font-extrabold text-slate-900">
+                {t("newScan.dropzoneTitle")}
+              </h3>
+              <p className="text-xs text-slate-500 mt-1 max-w-sm mx-auto">
+                {t("newScan.dropzoneSubtitle")}
+              </p>
+
+              <div
+                className="mt-6 flex flex-col sm:flex-row items-center justify-center gap-3"
+                onClick={(e) => e.stopPropagation()}
               >
-                {t("newScan.analyzeBtn")}
-              </Button>
+                <Button
+                  type="button"
+                  variant="primary"
+                  size="md"
+                  icon={ImagePlus}
+                  onClick={() => fileInputRef.current?.click()}
+                  className="w-full sm:w-auto"
+                >
+                  {t("newScan.choosePhotoBtn")}
+                </Button>
+                <Button
+                  type="button"
+                  variant="secondary"
+                  size="md"
+                  icon={Camera}
+                  onClick={() => cameraInputRef.current?.click()}
+                  className="w-full sm:w-auto"
+                >
+                  {t("newScan.takePhotoBtn")}
+                </Button>
+              </div>
             </div>
           ) : (
+            /* Selected Image Preview */
             <div className="space-y-4">
-              <div className="flex items-center justify-between gap-2">
+              <div className="flex flex-wrap items-center justify-between gap-2">
                 <div>
                   <h3 className="text-sm font-bold text-slate-900">
                     {t("newScan.previewTitle")}
                   </h3>
-                  <p className="text-xs text-slate-500 truncate max-w-xs">
+                  <p className="text-xs text-slate-500 truncate max-w-xs sm:max-w-md">
                     {file.name} • {t("newScan.fileSizeLabel")}:{" "}
                     {(file.size / (1024 * 1024)).toFixed(2)} MB
                   </p>
@@ -389,7 +457,8 @@ export default function NewScan() {
                 {!analyzing && (
                   <div className="flex items-center gap-2">
                     <Button
-                      variant="outline"
+                      type="button"
+                      variant="secondary"
                       size="sm"
                       icon={RefreshCw}
                       onClick={() => fileInputRef.current?.click()}
@@ -397,11 +466,11 @@ export default function NewScan() {
                       {t("newScan.replacePhotoBtn")}
                     </Button>
                     <Button
-                      variant="ghost"
+                      type="button"
+                      variant="danger"
                       size="sm"
                       icon={Trash2}
                       onClick={handleRemoveFile}
-                      className="!text-[#dc2626] hover:!bg-red-50"
                     >
                       {t("newScan.removePhotoBtn")}
                     </Button>
@@ -409,14 +478,13 @@ export default function NewScan() {
                 )}
               </div>
 
-              {/* Image Preview Container with Scanning Laser Animation */}
-              <div className="relative rounded-2xl overflow-hidden border border-slate-200 bg-slate-950 aspect-video sm:aspect-[16/10] flex items-center justify-center">
+              <div className="relative rounded-2xl overflow-hidden bg-slate-950 border border-slate-200 aspect-4/3 max-h-96 flex items-center justify-center">
                 <img
                   src={previewUrl}
                   alt="Selected crop leaf"
-                  className={`max-h-full max-w-full object-contain transition-opacity duration-300 ${
-                    analyzing ? "opacity-65" : "opacity-100"
-                  }`}
+                  width={400}
+                  height={300}
+                  className="w-full h-full object-contain"
                 />
 
                 {analyzing && (
@@ -426,9 +494,9 @@ export default function NewScan() {
                     transition={{
                       duration: 2.2,
                       repeat: Infinity,
-                      ease: "linear",
+                      ease: "easeInOut",
                     }}
-                    className="absolute inset-x-0 h-1 bg-gradient-to-r from-transparent via-[#84cc16] to-transparent shadow-[0_0_20px_#84cc16]"
+                    className="pointer-events-none absolute inset-x-0 h-1 bg-gradient-to-r from-transparent via-[#84cc16] to-transparent shadow-[0_0_20px_#84cc16]"
                   />
                 )}
               </div>
@@ -436,10 +504,30 @@ export default function NewScan() {
               {/* Animated Progress Steps when Analyzing */}
               {analyzing ? (
                 <div className="rounded-2xl bg-emerald-950 text-white p-5 space-y-3.5">
-                  <div className="flex items-center gap-2.5 text-sm font-bold text-[#a3e635]">
-                    <Spinner size="sm" className="text-[#a3e635]" />
-                    <span>{t("newScan.progress.title")}</span>
+                  <div className="flex items-center justify-between gap-2.5 text-sm font-bold text-[#a3e635]">
+                    <div className="flex items-center gap-2.5">
+                      <Spinner size="sm" className="text-[#a3e635]" />
+                      <span>
+                        {isFirstTimeAiLoad && progressStep === 0
+                          ? t("newScan.progress.preparingAiFirstTime")
+                          : t("newScan.progress.checkingLeaf")}
+                      </span>
+                    </div>
+                    {isFirstTimeAiLoad && progressStep === 0 && aiLoadPercent > 0 && (
+                      <span className="text-xs font-extrabold text-emerald-200">
+                        {aiLoadPercent}%
+                      </span>
+                    )}
                   </div>
+
+                  {isFirstTimeAiLoad && progressStep === 0 && (
+                    <div className="w-full h-2 rounded-full bg-emerald-900 overflow-hidden">
+                      <div
+                        className="h-full bg-[#84cc16] transition-all duration-200"
+                        style={{ width: `${Math.max(8, aiLoadPercent)}%` }}
+                      />
+                    </div>
+                  )}
 
                   <div className="space-y-2">
                     {steps.map((stepText, idx) => {

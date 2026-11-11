@@ -466,9 +466,12 @@
     },
     "progress": {
       "title": "Checking Your Leaf Photo...",
+      "preparingAiFirstTime": "Preparing the AI (first time only)...",
+      "checkingLeaf": "Checking the leaf for disease...",
       "step1": "Uploading leaf photo...",
       "step2": "Checking the leaf for disease...",
-      "step3": "Highlighting diseased spots on the leaf..."
+      "step3": "Highlighting diseased spots on the leaf...",
+      "fallbackToServer": "Using server analysis for your device..."
     },
     "errors": {
       "invalidType": "Invalid file format. Please select a JPG, JPEG, or PNG image.",

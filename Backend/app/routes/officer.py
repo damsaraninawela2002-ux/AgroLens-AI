@@ -7,8 +7,11 @@ from fastapi import APIRouter, Depends, HTTPException, Query, status
 from pydantic import BaseModel, Field
 from app.core.database import get_database
 from app.core.security import require_role
-from app.routes.predict import serialize_diagnosis, serialize_treatment
-from app.services.ml_service import get_class_names
+from app.routes.predict import (
+    load_class_names as get_class_names,
+    serialize_diagnosis,
+    serialize_treatment,
+)
 
 router = APIRouter(prefix="/api/officer", tags=["Agricultural Officer Review"])
 

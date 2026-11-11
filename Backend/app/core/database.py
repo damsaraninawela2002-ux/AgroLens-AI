@@ -8,7 +8,6 @@ from typing import Optional
 from fastapi import FastAPI, HTTPException, status
 from motor.motor_asyncio import AsyncIOMotorClient, AsyncIOMotorDatabase
 from app.core.config import settings
-from app.services.ml_service import load_ml_artifacts
 
 
 class DatabaseManager:
@@ -22,8 +21,16 @@ db_manager = DatabaseManager()
 async def connect_to_mongo() -> None:
     """Connect to MongoDB Atlas using Motor and create required indexes."""
     if not settings.MONGODB_URI:
-        print("[ERROR] MongoDB connection failed: MONGODB_URI is not configured in .env")
-        raise RuntimeError("MONGODB_URI is not configured in .env")
+        print(
+            "[ERROR] Startup failed: MONGODB_URI is required but not configured in environment variables."
+        )
+        raise RuntimeError("Missing required environment variable: MONGODB_URI")
+
+    if not settings.JWT_SECRET_KEY:
+        print(
+            "[ERROR] Startup failed: JWT_SECRET_KEY is required but not configured in environment variables."
+        )
+        raise RuntimeError("Missing required environment variable: JWT_SECRET_KEY")
 
     try:
         db_manager.client = AsyncIOMotorClient(
@@ -97,9 +104,8 @@ def get_database() -> AsyncIOMotorDatabase:
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    """FastAPI lifespan handler to connect to MongoDB and load ML artifacts once at startup."""
+    """FastAPI lifespan handler to connect to MongoDB at startup without loading TensorFlow/ML models."""
     await connect_to_mongo()
-    load_ml_artifacts()
     try:
         yield
     finally:

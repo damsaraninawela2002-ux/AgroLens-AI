@@ -48,8 +48,13 @@ from app.models.admin import (
     UsersByRoleStats,
 )
 from app.models.user import UserResponse
-from app.routes.predict import BACKEND_DIR, serialize_diagnosis, serialize_treatment
-from app.services.ml_service import get_class_names, get_model_metrics
+from app.routes.predict import (
+    BACKEND_DIR,
+    load_class_names as get_class_names,
+    load_model_metrics as get_model_metrics,
+    serialize_diagnosis,
+    serialize_treatment,
+)
 
 router = APIRouter(prefix="/api/admin", tags=["Admin Portal"])
 

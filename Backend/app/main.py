@@ -14,8 +14,6 @@ from app.routes.predict import router as predict_router
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 UPLOADS_DIR = BASE_DIR / "uploads"
-(UPLOADS_DIR / "images").mkdir(parents=True, exist_ok=True)
-(UPLOADS_DIR / "heatmaps").mkdir(parents=True, exist_ok=True)
 
 app = FastAPI(
     title="AgroLens AI API",
@@ -41,8 +39,12 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Serve uploaded leaf images and Grad-CAM heatmaps at /uploads
-app.mount("/uploads", StaticFiles(directory=str(UPLOADS_DIR)), name="uploads")
+# Serve legacy local uploads at /uploads if directory exists (check_dir=False avoids errors on Render)
+app.mount(
+    "/uploads",
+    StaticFiles(directory=str(UPLOADS_DIR), check_dir=False),
+    name="uploads",
+)
 
 app.include_router(auth_router)
 app.include_router(predict_router)
@@ -55,6 +57,11 @@ app.include_router(chat_router)
 @app.get("/")
 def root():
     return {"message": "AgroLens AI API is running"}
+
+
+@app.get("/health", tags=["Health"])
+def simple_health_check():
+    return {"status": "ok"}
 
 
 @app.get("/api/health", tags=["Health"])

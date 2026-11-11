@@ -42,6 +42,18 @@ from app.services.email_service import send_password_reset_email
 
 router = APIRouter(prefix="/api/auth", tags=["Authentication"])
 
+
+def _get_cookie_kwargs() -> dict[str, Any]:
+    """Return cookie attributes; uses Secure + SameSite=None when COOKIE_SECURE=true."""
+    is_secure = bool(getattr(settings, "COOKIE_SECURE", False))
+    return {
+        "httponly": True,
+        "secure": is_secure,
+        "samesite": "none" if is_secure else "lax",
+        "path": "/",
+    }
+
+
 FORGOT_PASSWORD_MAX_REQUESTS = 3
 FORGOT_PASSWORD_WINDOW_MINUTES = 15
 RESET_TOKEN_EXPIRE_MINUTES = 15
@@ -500,11 +512,8 @@ async def login_user(request: Request, response: Response) -> TokenResponse:
     response.set_cookie(
         key="refresh_token",
         value=refresh_token,
-        httponly=True,
-        secure=bool(getattr(settings, "COOKIE_SECURE", False)),
-        samesite="lax",
         max_age=expire_days * 24 * 60 * 60,
-        path="/",
+        **_get_cookie_kwargs(),
     )
 
     return TokenResponse(
@@ -540,7 +549,7 @@ async def refresh_access_token(
             algorithms=[settings.JWT_ALGORITHM],
         )
     except JWTError:
-        response.delete_cookie(key="refresh_token", path="/", httponly=True, samesite="lax")
+        response.delete_cookie(key="refresh_token", **_get_cookie_kwargs())
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Invalid or expired refresh token",
@@ -568,7 +577,7 @@ async def refresh_access_token(
         or session_doc.get("revoked", False)
         or not session_doc.get("is_active", True)
     ):
-        response.delete_cookie(key="refresh_token", path="/", httponly=True, samesite="lax")
+        response.delete_cookie(key="refresh_token", **_get_cookie_kwargs())
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Session has been revoked or expired",
@@ -581,7 +590,7 @@ async def refresh_access_token(
             {"hashed_token_id": hashed_tid},
             {"$set": {"revoked": True, "is_active": False, "revoked_at": now}},
         )
-        response.delete_cookie(key="refresh_token", path="/", httponly=True, samesite="lax")
+        response.delete_cookie(key="refresh_token", **_get_cookie_kwargs())
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Session has expired",
@@ -595,7 +604,7 @@ async def refresh_access_token(
         user_doc = await db["users"].find_one({"email": str(user_id)})
 
     if user_doc is None or not user_doc.get("is_active", True):
-        response.delete_cookie(key="refresh_token", path="/", httponly=True, samesite="lax")
+        response.delete_cookie(key="refresh_token", **_get_cookie_kwargs())
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="User account is inactive or not found",
@@ -609,7 +618,7 @@ async def refresh_access_token(
             {"hashed_token_id": hashed_tid},
             {"$set": {"revoked": True, "is_active": False, "revoked_at": now}},
         )
-        response.delete_cookie(key="refresh_token", path="/", httponly=True, samesite="lax")
+        response.delete_cookie(key="refresh_token", **_get_cookie_kwargs())
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Token version mismatch",
@@ -660,11 +669,8 @@ async def refresh_access_token(
     response.set_cookie(
         key="refresh_token",
         value=new_refresh_token,
-        httponly=True,
-        secure=bool(getattr(settings, "COOKIE_SECURE", False)),
-        samesite="lax",
         max_age=expire_days * 24 * 60 * 60,
-        path="/",
+        **_get_cookie_kwargs(),
     )
 
     return TokenResponse(
@@ -739,12 +745,7 @@ async def logout_user(
             )
             revoke_token_in_memory(token, str(latest["hashed_token_id"]))
 
-    response.delete_cookie(
-        key="refresh_token",
-        path="/",
-        httponly=True,
-        samesite="lax",
-    )
+    response.delete_cookie(key="refresh_token", **_get_cookie_kwargs())
     return {"message": "Logged out successfully"}
 
 
@@ -782,12 +783,7 @@ async def logout_all_sessions(
             {"$inc": {"token_version": 1}, "$set": {"updated_at": now}},
         )
 
-    response.delete_cookie(
-        key="refresh_token",
-        path="/",
-        httponly=True,
-        samesite="lax",
-    )
+    response.delete_cookie(key="refresh_token", **_get_cookie_kwargs())
     return {"message": "Logged out from all sessions"}
 
 
@@ -887,12 +883,7 @@ async def deactivate_account(
         {"user_id": current_user["id"]},
         {"$set": {"is_active": False, "revoked": True, "revoked_at": now}},
     )
-    response.delete_cookie(
-        key="refresh_token",
-        path="/",
-        httponly=True,
-        samesite="lax",
-    )
+    response.delete_cookie(key="refresh_token", **_get_cookie_kwargs())
     return {"message": "Account deactivated"}
 
 

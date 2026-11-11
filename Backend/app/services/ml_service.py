@@ -4,8 +4,6 @@ from pathlib import Path
 from typing import Any, Optional
 import numpy as np
 from PIL import Image
-import tensorflow as tf
-from tensorflow.keras.applications.mobilenet_v2 import preprocess_input
 
 ML_MODELS_DIR = Path(__file__).resolve().parent.parent / "ml_models"
 MODEL_PATH = ML_MODELS_DIR / "agrolens_model.keras"
@@ -22,7 +20,7 @@ CROP_PREFIXES: dict[str, str] = {
 
 
 class MLModelManager:
-    model: Optional[tf.keras.Model] = None
+    model: Optional[Any] = None
     class_names: list[str] = []
     model_metrics: dict[str, Any] = {}
 
@@ -31,7 +29,9 @@ ml_manager = MLModelManager()
 
 
 def load_ml_artifacts() -> None:
-    """Load the Keras model, class names, and metrics once at application startup."""
+    """Load the Keras model, class names, and metrics lazily on first use."""
+    import tensorflow as tf
+
     if not MODEL_PATH.exists():
         raise FileNotFoundError(f"Model file not found at {MODEL_PATH}")
     if not CLASS_NAMES_PATH.exists():
@@ -53,7 +53,7 @@ def load_ml_artifacts() -> None:
     )
 
 
-def get_model() -> tf.keras.Model:
+def get_model() -> Any:
     if ml_manager.model is None:
         load_ml_artifacts()
     assert ml_manager.model is not None
@@ -61,8 +61,9 @@ def get_model() -> tf.keras.Model:
 
 
 def get_class_names() -> list[str]:
-    if not ml_manager.class_names:
-        load_ml_artifacts()
+    if not ml_manager.class_names and CLASS_NAMES_PATH.exists():
+        with open(CLASS_NAMES_PATH, "r", encoding="utf-8") as f:
+            ml_manager.class_names = json.load(f)
     return ml_manager.class_names
 
 
@@ -79,6 +80,8 @@ def preprocess_image_bytes(image_bytes: bytes) -> tuple[np.ndarray, np.ndarray]:
     - orig_rgb: (224, 224, 3) float32 array in [0, 255]
     - preprocessed_batch: (1, 224, 224, 3) float32 array scaled with MobileNetV2 preprocess_input
     """
+    from tensorflow.keras.applications.mobilenet_v2 import preprocess_input
+
     with Image.open(io.BytesIO(image_bytes)) as img:
         rgb_img = img.convert("RGB").resize(IMG_SIZE)
         orig_rgb = np.array(rgb_img, dtype=np.float32)

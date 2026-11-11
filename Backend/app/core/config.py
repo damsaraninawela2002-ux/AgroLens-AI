@@ -2,7 +2,7 @@ import os
 from pathlib import Path
 from dotenv import load_dotenv
 
-# Load environment variables from Backend/.env
+# Load environment variables from Backend/.env if present
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 ENV_PATH = BASE_DIR / ".env"
 load_dotenv(dotenv_path=ENV_PATH)
@@ -21,7 +21,7 @@ class Settings:
         self.JWT_SECRET_KEY: str = (
             os.getenv("JWT_SECRET_KEY")
             or os.getenv("SECRET_KEY")
-            or "agrolens-default-jwt-secret-key"
+            or ""
         ).strip()
         self.JWT_ALGORITHM: str = (
             os.getenv("JWT_ALGORITHM") or "HS256"
@@ -36,9 +36,9 @@ class Settings:
             os.getenv("ALLOWED_ORIGINS") or "http://localhost:5173"
         ).strip()
         parsed_origins = [
-            origin.strip()
+            origin.strip().rstrip("/")
             for origin in raw_origins.split(",")
-            if origin.strip()
+            if origin.strip().rstrip("/")
         ]
         self.ALLOWED_ORIGINS: list[str] = (
             parsed_origins if parsed_origins else ["http://localhost:5173"]
@@ -49,6 +49,15 @@ class Settings:
         self.GEMINI_API_KEY: str = (os.getenv("GEMINI_API_KEY") or "").strip()
         self.GEMINI_MODEL: str = (
             os.getenv("GEMINI_MODEL") or "gemini-2.5-flash"
+        ).strip()
+        self.CLOUDINARY_CLOUD_NAME: str = (
+            os.getenv("CLOUDINARY_CLOUD_NAME") or ""
+        ).strip()
+        self.CLOUDINARY_API_KEY: str = (
+            os.getenv("CLOUDINARY_API_KEY") or ""
+        ).strip()
+        self.CLOUDINARY_API_SECRET: str = (
+            os.getenv("CLOUDINARY_API_SECRET") or ""
         ).strip()
         self.SMTP_HOST: str = (os.getenv("SMTP_HOST") or "").strip()
         raw_smtp_port = (os.getenv("SMTP_PORT") or "587").strip()
