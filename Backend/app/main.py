@@ -57,6 +57,11 @@ def root():
     return {"message": "AgroLens AI API is running"}
 
 
+@app.get("/health", tags=["Health"])
+def simple_health_check():
+    return {"status": "ok"}
+
+
 @app.get("/api/health", tags=["Health"])
 async def health_check():
     """Check API status and verify active MongoDB connection."""

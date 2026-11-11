@@ -260,7 +260,7 @@ export default function Landing() {
                         {/* Scanner Reticle Box */}
                         <div className="absolute top-5 right-5 w-14 h-14 rounded-lg border-2 border-[#f59e0b] shadow-sm flex items-start justify-end p-1">
                           <span className="px-1 py-0.5 rounded text-[9px] font-bold bg-[#dc2626] text-white leading-none">
-                            {t("hero.mockup.healthyArea")}
+                            {t("hero.mockup.diseasedArea")}
                           </span>
                         </div>
                       </div>
@@ -321,7 +321,7 @@ export default function Landing() {
                       </span>
                     </span>
                     <span className="shrink-0 font-mono text-[10px] px-2 py-0.5 rounded bg-white/10">
-                      {t("hero.mockup.diseasedArea")}
+                      {t("hero.mockup.healthyArea")}
                     </span>
                   </div>
                 </div>
